@@ -22,10 +22,10 @@
 
 import uuid
 import sqlite3
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 
-class Database:
+class DatabaseClient:
     """A class to manage SQLite database operations."""
 
     def __init__(self, path: str):
@@ -51,7 +51,7 @@ class Database:
         cursor = self._connection.cursor()
 
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS backup (id TEXT, remoteIdent TEXT, meta TEXT, team TEXT, createdAt TEXT, updatedAt TEXT)"
+            "CREATE TABLE IF NOT EXISTS backup (id TEXT, localIdent TEXT, remoteIdent TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
         )
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS log (id TEXT, summary TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
@@ -60,11 +60,11 @@ class Database:
         cursor.close()
         self._connection.commit()
 
-    def insert_document(self, document: Dict[str, Any]) -> int:
-        """Insert a new document
+    def insert_backup(self, backup: Dict[str, Any]) -> int:
+        """Insert a new backup item
 
         Args:
-            document (Dict): The document data
+            backup (Dict): The backup data
 
         Returns:
             The total rows inserted
@@ -72,12 +72,12 @@ class Database:
         cursor = self._connection.cursor()
 
         result = cursor.execute(
-            "INSERT INTO document VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+            "INSERT INTO backup VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
             (
-                document.get("id", str(uuid.uuid4())),
-                document.get("content"),
-                document.get("meta", "{}"),
-                document.get("team"),
+                backup.get("id", str(uuid.uuid4())),
+                backup.get("localIdent"),
+                backup.get("remoteIdent"),
+                backup.get("meta", "{}"),
             ),
         )
 
@@ -87,11 +87,11 @@ class Database:
 
         return result.rowcount
 
-    def insert_alert(self, alert: Dict[str, Any]) -> int:
-        """Insert a new alert
+    def insert_log(self, log: Dict[str, Any]) -> int:
+        """Insert a new log record
 
         Args:
-            alert (Dict): The alert data
+            log (Dict): The log data
 
         Returns:
             The total rows inserted
@@ -99,12 +99,11 @@ class Database:
         cursor = self._connection.cursor()
 
         result = cursor.execute(
-            "INSERT INTO alert VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+            "INSERT INTO log VALUES (?, ?, ?, datetime('now'), datetime('now'))",
             (
-                alert.get("id", str(uuid.uuid4())),
-                alert.get("summary"),
-                alert.get("meta", "{}"),
-                alert.get("team"),
+                log.get("id", str(uuid.uuid4())),
+                log.get("summary"),
+                log.get("meta", "{}"),
             ),
         )
 
@@ -114,112 +113,82 @@ class Database:
 
         return result.rowcount
 
-    def delete_document(self, id: str) -> None:
-        """Delete a document by its ID.
+    def delete_backup(self, id: str) -> None:
+        """Delete a backup by its ID.
 
         Args:
-            id (str): The ID of the document to delete.
+            id (str): The ID of the backup to delete.
         """
         cursor = self._connection.cursor()
-        cursor.execute("DELETE FROM document WHERE id = ?", (id,))
+        cursor.execute("DELETE FROM backup WHERE id = ?", (id,))
         cursor.close()
         self._connection.commit()
 
-    def delete_alert(self, id: str) -> None:
-        """Delete an alert by its ID.
+    def delete_log(self, id: str) -> None:
+        """Delete a log by its ID.
 
         Args:
-            id (str): The ID of the alert to delete.
+            id (str): The ID of the log to delete.
         """
         cursor = self._connection.cursor()
-        cursor.execute("DELETE FROM alert WHERE id = ?", (id,))
+        cursor.execute("DELETE FROM log WHERE id = ?", (id,))
         cursor.close()
         self._connection.commit()
 
-    def get_document_by_id(self, id: str) -> Dict[str, Any]:
-        """Retrieve a document by its ID.
+    def get_backup_by_id(self, id: str) -> Dict[str, Any]:
+        """Retrieve a backup by its ID.
 
         Args:
-            id (str): The ID of the document to retrieve.
+            id (str): The ID of the backup to retrieve.
 
         Returns:
-            Dict[str, Any]: A dictionary containing the document details.
+            Dict[str, Any]: A dictionary containing the backup details.
         """
         cursor = self._connection.cursor()
-        cursor.execute("SELECT * FROM document WHERE id = ?", (id,))
+        cursor.execute("SELECT * FROM backup WHERE id = ?", (id,))
         result = cursor.fetchone()
         cursor.close()
 
         return (
             dict(
-                zip(["id", "content", "meta", "team", "createdAt", "updatedAt"], result)
+                zip(
+                    [
+                        "id",
+                        "localIdent",
+                        "remoteIdent",
+                        "meta",
+                        "createdAt",
+                        "updatedAt",
+                    ],
+                    result,
+                )
             )
             if result
             else None
         )
 
-    def get_alert_by_id(self, id: str) -> Dict[str, Any]:
-        """Retrieve an alert by its ID.
+    def get_log_by_id(self, id: str) -> Dict[str, Any]:
+        """Retrieve a log by its ID.
 
         Args:
-            id (str): The ID of the alert to retrieve.
+            id (str): The ID of the log to retrieve.
 
         Returns:
-            Dict[str, Any]: A dictionary containing the alert details.
+            Dict[str, Any]: A dictionary containing the log details.
         """
         cursor = self._connection.cursor()
-        cursor.execute("SELECT * FROM alert WHERE id = ?", (id,))
+        cursor.execute("SELECT * FROM log WHERE id = ?", (id,))
         result = cursor.fetchone()
         cursor.close()
 
         return (
-            dict(
-                zip(["id", "summary", "meta", "team", "createdAt", "updatedAt"], result)
-            )
+            dict(zip(["id", "summary", "meta", "createdAt", "updatedAt"], result))
             if result
             else None
         )
 
-    def get_documents_by_team(self, team: str) -> List[Dict[str, Any]]:
-        """Retrieve all documents for a specific team.
 
-        Args:
-            team (str): The team name.
-
-        Returns:
-            List[Dict[str, Any]]: A list of dictionaries containing document details.
-        """
-        cursor = self._connection.cursor()
-        cursor.execute("SELECT * FROM document WHERE team = ?", (team,))
-        results = cursor.fetchall()
-        cursor.close()
-
-        return [
-            dict(zip(["id", "content", "meta", "team", "createdAt", "updatedAt"], row))
-            for row in results
-        ]
-
-    def get_alerts_by_team(self, team: str) -> List[Dict[str, Any]]:
-        """Retrieve all alerts for a specific team.
-
-        Args:
-            team (str): The team name.
-
-        Returns:
-            List[Dict[str, Any]]: A list of dictionaries containing alert details.
-        """
-        cursor = self._connection.cursor()
-        cursor.execute("SELECT * FROM alert WHERE team = ?", (team,))
-        results = cursor.fetchall()
-        cursor.close()
-
-        return [
-            dict(zip(["id", "summary", "meta", "team", "createdAt", "updatedAt"], row))
-            for row in results
-        ]
-
-
-def get_database_client(path: str) -> Database:
+def get_database_client(path: str) -> DatabaseClient:
     """Create and return a Database instance.
 
     Args:
@@ -228,4 +197,4 @@ def get_database_client(path: str) -> Database:
     Returns:
         Database: Initialized Database client.
     """
-    return Database(path)
+    return DatabaseClient(path)

@@ -20,9 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .logger import get_logger
-from .database import get_database_client
-from .file_system import get_file_system
+from .logger import Logger, get_logger
+from .database import DatabaseClient, get_database_client
+from .file_system import FileSystem, get_file_system
 from .config import Config, get_config
+from .compress import Compress, get_compress
 from .util import success
 from .util import error
