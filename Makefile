@@ -1,6 +1,6 @@
-PYTHON ?= ./.venv/bin/python
+PYTHON ?= python
 PIP    ?= $(PYTHON) -m pip
-TOX    ?= ./.venv/bin/tox
+TOX    ?= tox
 
 
 help: Makefile
