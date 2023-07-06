@@ -23,5 +23,6 @@
 from .logger import get_logger
 from .database import get_database_client
 from .file_system import get_file_system
+from .config import Config, get_config
 from .util import success
 from .util import error

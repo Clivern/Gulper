@@ -25,6 +25,8 @@ from typing import Dict, Any, Optional
 
 
 class Config:
+    """Config Class"""
+
     def __init__(self, config_file: str) -> None:
         """
         Initialize the Config object and load the configuration from a YAML file.
@@ -160,7 +162,7 @@ class Config:
         return None
 
 
-def get_configs(config_file: str) -> Config:
+def get_config(config_file: str) -> Config:
     """
     Create and return a Config object from a specified configuration file.
 
