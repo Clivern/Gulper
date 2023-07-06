@@ -25,9 +25,7 @@ import click
 from dumpitt import __version__
 
 
-@click.group(
-    help="🐺 A Command Line Tool to Backup and Restore MySQL and PostgreSQL!"
-)
+@click.group(help="🐺 A Command Line Tool to Backup and Restore MySQL and PostgreSQL!")
 @click.version_option(version=__version__, help="Show the current version")
 def main():
     """Main command group for Dumpitt CLI."""

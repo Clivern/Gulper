@@ -51,10 +51,10 @@ class Database:
         cursor = self._connection.cursor()
 
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS document (id TEXT, content TEXT, meta TEXT, team TEXT, createdAt TEXT, updatedAt TEXT)"
+            "CREATE TABLE IF NOT EXISTS backup (id TEXT, remoteIdent TEXT, meta TEXT, team TEXT, createdAt TEXT, updatedAt TEXT)"
         )
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS alert (id TEXT, summary TEXT, meta TEXT, team TEXT, createdAt TEXT, updatedAt TEXT)"
+            "CREATE TABLE IF NOT EXISTS log (id TEXT, summary TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
         )
 
         cursor.close()
