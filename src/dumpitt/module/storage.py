@@ -20,10 +20,65 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
+import datetime
+from .file_system import FileSystem
 
-class Storage:
+
+class LocalStorage:
+    """
+    Manages local file storage by providing functionality to delete old files.
+    """
+
+    def __init__(self, base_path: str, file_system: FileSystem):
+        """
+        Initializes the LocalStorage instance with a base directory path.
+
+        Args:
+            base_path (str): The base directory path for file management.
+            file_system (FileSystem): The file system object
+        """
+        self._base_path = base_path
+        self._file_system = file_system
+
+    def delete_old_files(self, days: int) -> int:
+        """
+        Deletes files older than the specified number of days within the base directory and its subdirectories.
+
+        Args:
+            days (int): The number of days; files older than this will be deleted.
+
+        Returns:
+            int: The number of files deleted.
+        """
+        now = datetime.datetime.now()
+        deleted_files_count = 0
+
+        for root, dirs, files in os.walk(self._base_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                file_modified = datetime.datetime.fromtimestamp(
+                    os.path.getmtime(file_path)
+                )
+                if (now - file_modified).days > days:
+                    os.remove(file_path)
+                    deleted_files_count += 1
+
+        return deleted_files_count
+
+    def store_file(
+        self, current_path: str, new_name: str, delete_current: bool
+    ) -> bool:
+        pass
+
+
+class S3Storage:
     pass
 
 
-def get_storage() -> Storage:
-    return Storage()
+def get_local_storage() -> LocalStorage:
+    return LocalStorage()
+
+
+def get_s3_storage() -> S3Storage:
+    return S3Storage()

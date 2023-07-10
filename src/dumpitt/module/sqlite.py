@@ -19,3 +19,114 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+import uuid
+import sqlite3
+import os
+from .file_system import FileSystem
+
+
+class SQLiteClient:
+    """
+    Manages SQLite database operations, including backups and connection testing.
+    """
+
+    def __init__(self, temp_path: str, file_system: FileSystem):
+        """
+        Initializes the SQLite instance with a temporary directory path and a FileSystem instance.
+
+        Args:
+            temp_path (str): The temporary directory path for storing database backups.
+            file_system (FileSystem): An instance of the FileSystem class for file operations.
+        """
+        self._temp_path = temp_path.rstrip("/")
+        self._file_system = file_system
+
+    def backup(self, db_path: str) -> str:
+        """
+        Creates a backup of a SQLite database.
+
+        Args:
+            db_path (str): The path to the SQLite database file to be backed up.
+
+        Returns:
+            str: The path to the backup file.
+        """
+        new_db_name = uuid.uuid4()
+        new_db_path = f"{self._temp_path}/{new_db_name}.db"
+
+        # Copy DB to a Temp directory
+        self._file_system.backup(db_path, new_db_path)
+
+        # Create a tar file of the db and checksum
+        tar_file_path = f"{self._temp_path}/{new_db_name}.tar.gz"
+        self._file_system.write_checksum_to_file(new_db_path)
+        self._file_system.compress_as_tar_gz(
+            new_db_path, f"{new_db_path}.checksum", tar_file_path
+        )
+
+        # Delete Temp DB paths
+        self._file_system.delete_file(f"{new_db_path}.checksum")
+        self._file_system.delete_file(new_db_path)
+
+        return tar_file_path
+
+    def restore(self, backup_path: str, db_path: str):
+        """
+        Restore SQLite database
+
+        Args:
+            backup_path (str): The backup path
+            db_path (str): The database path
+        """
+        self._file_system.extract_tar_gz(backup_path, self._temp_path)
+
+        file_name = os.path.basename(backup_path).replace(".tar.gz", "")
+        dir_path = os.path.dirname(backup_path)
+
+        current_db_path = f"{dir_path}/{file_name}.db"
+        current_db_checksum = f"{dir_path}/{file_name}.db.checksum"
+
+        checksum = self._file_system.read_file(current_db_checksum)
+
+        if checksum != self._file_system.get_sha256_hash(current_db_path):
+            raise Exception("checksum doesn't match!")
+
+        # Restore a database file
+        self._file_system.restore(current_db_path, db_path)
+
+        # Cleanup files
+        self._file_system.delete_file(current_db_checksum)
+        self._file_system.delete_file(backup_path)
+        self._file_system.delete_file(current_db_path)
+
+    def test_connection(self, db_path: str) -> bool:
+        """
+        Tests the connection to a SQLite database.
+
+        Args:
+            db_path (str): The path to the SQLite database file.
+
+        Returns:
+            bool: True if the connection was successful, False otherwise.
+        """
+        try:
+            conn = sqlite3.connect(db_path)
+            conn.close()
+            return True
+        except sqlite3.Error:
+            return False
+
+
+def get_sqlite_client(temp_path: str, file_system: FileSystem) -> SQLiteClient:
+    """
+    Creates and returns a new SQLite instance.
+
+    Args:
+        temp_path (str): The temporary directory path for storing database backups.
+        file_system (FileSystem): An instance of the FileSystem class for file operations.
+
+    Returns:
+        SQLite: A new instance of the SQLite class.
+    """
+    return SQLiteClient(temp_path, file_system)

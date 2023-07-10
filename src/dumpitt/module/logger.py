@@ -73,6 +73,6 @@ def get_logger() -> Logger:
     """Create and return a logger instance for the calling module.
 
     Returns:
-        logging.Logger: Configured logger instance.
+        Logger: a Logger instance.
     """
-    return Logger().get_logger(__name__)
+    return Logger()

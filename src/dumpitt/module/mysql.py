@@ -20,12 +20,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import List, Any, Dict
 import subprocess
 import shlex
 
 
-class MySQL:
-    def __init__(self, host, username, password, database=None):
+class MySQLClient:
+    """
+    A wrapper class for MySQL database operations, primarily focused on database dumping.
+    """
+
+    def __init__(
+        self,
+        host: str,
+        username: str,
+        password: str,
+        port: int = 3306,
+        databases: List[str] = [],
+    ):
         """
         Initialize the MySQL wrapper.
 
@@ -33,40 +45,57 @@ class MySQL:
             host (str): MySQL host
             username (str): MySQL username
             password (str): MySQL password
-            database (str, optional): Optional MySQL database name. Defaults to None.
+            port (int): MySQL port
+            databases (List[str], optional): Optional MySQL database names. Defaults to all databases.
         """
-        self.host = host
-        self.username = username
-        self.password = password
-        self.database = database
+        self._host: str = host
+        self._username: str = username
+        self._password: str = password
+        self._port: int = port
+        self._databases: List[str] = databases
 
-    def dump(self, output_file, **kwargs):
+    def dump(self, output_file: str, options: Dict[str, Any]) -> None:
         """
-        Dump the MySQL database using mysqldump.
+        Dump the MySQL database(s) using mysqldump.
+
+        This method constructs and executes a mysqldump command to create a backup
+        of the specified database(s). Additional options can be passed as keyword arguments.
 
         Args:
-            output_file (str): Output file path
-            **kwargs: Additional options for mysqldump
+            output_file (str): Output file path where the dump will be saved.
+            options (Dict[str, Any]): Additional options for mysqldump.
         """
-        command = self._build_dump_command(output_file, **kwargs)
+        command = self._build_dump_command(output_file, options)
         self._execute_command(command)
 
-    def _build_dump_command(self, output_file, **kwargs):
+    def _build_dump_command(self, output_file: str, options: Dict[str, Any]) -> str:
         """
         Build the mysqldump command with options.
 
+        This method constructs the mysqldump command string based on the instance attributes
+        and any additional options provided.
+
         Args:
-            output_file (str): Output file path
-            **kwargs: Additional options for mysqldump
+            output_file (str): Output file path where the dump will be saved.
+            options (Dict[str, Any]): Additional options for mysqldump.
+
         Returns:
-            str: mysqldump command string
+            str: The complete mysqldump command string.
+
+        Note:
+            Boolean options are treated as flags (added if True).
+            String options are added as key=value.
+            List options are added as multiple instances of key=item.
         """
-        command = f"mysqldump -h {self.host} -u {self.username} -p{self.password}"
+        command = f"mysqldump -h {self._host} -u {self._username} -P {self._port} -p{self._password}"
 
-        if self.database:
-            command += f" {self.database}"
+        if len(self._databases) > 0:
+            dbs = " ".join(self._databases)
+            command += f" --databases {dbs}"
+        else:
+            command += " --all-databases"
 
-        for key, value in kwargs.items():
+        for key, value in options.items():
             if isinstance(value, bool):
                 if value:
                     command += f" --{key}"
@@ -80,9 +109,11 @@ class MySQL:
 
         return command
 
-    def _execute_command(self, command):
+    def _execute_command(self, command: str) -> None:
         """
         Execute a shell command.
+
+        This method is responsible for executing the constructed mysqldump command.
 
         Args:
             command (str): Command string to execute
@@ -90,5 +121,7 @@ class MySQL:
         subprocess.check_call(shlex.split(command), shell=False)
 
 
-def get_mysql_client(host: str, username: str, password: str, database=None) -> MySQL:
-    return MySQL(host, username, password, database)
+def get_mysql_client(
+    host: str, username: str, password: str, port: int = 3306, databases: List[str] = []
+) -> MySQLClient:
+    return MySQLClient(host, username, password, port, databases)
