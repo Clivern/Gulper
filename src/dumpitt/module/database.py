@@ -51,10 +51,10 @@ class DatabaseClient:
         cursor = self._connection.cursor()
 
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS backup (id TEXT, localIdent TEXT, remoteIdent TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
+            "CREATE TABLE IF NOT EXISTS backup (id TEXT, dbIdent TEXT, meta TEXT, lastStatus TEXT, lastBackupAt TEXT, createdAt TEXT, updatedAt TEXT)"
         )
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS log (id TEXT, summary TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
+            "CREATE TABLE IF NOT EXISTS log (id TEXT, record TEXT, type TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
         )
 
         cursor.close()
@@ -72,12 +72,13 @@ class DatabaseClient:
         cursor = self._connection.cursor()
 
         result = cursor.execute(
-            "INSERT INTO backup VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+            "INSERT INTO backup VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))",
             (
                 backup.get("id", str(uuid.uuid4())),
-                backup.get("localIdent"),
-                backup.get("remoteIdent"),
+                backup.get("dbIdent"),
                 backup.get("meta", "{}"),
+                backup.get("lastStatus"),
+                backup.get("lastBackupAt"),
             ),
         )
 
@@ -99,10 +100,11 @@ class DatabaseClient:
         cursor = self._connection.cursor()
 
         result = cursor.execute(
-            "INSERT INTO log VALUES (?, ?, ?, datetime('now'), datetime('now'))",
+            "INSERT INTO log VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
             (
                 log.get("id", str(uuid.uuid4())),
-                log.get("summary"),
+                log.get("record"),
+                log.get("type"),
                 log.get("meta", "{}"),
             ),
         )
@@ -154,9 +156,10 @@ class DatabaseClient:
                 zip(
                     [
                         "id",
-                        "localIdent",
-                        "remoteIdent",
+                        "dbIdent",
                         "meta",
+                        "lastStatus",
+                        "lastBackupAt",
                         "createdAt",
                         "updatedAt",
                     ],
@@ -182,7 +185,9 @@ class DatabaseClient:
         cursor.close()
 
         return (
-            dict(zip(["id", "summary", "meta", "createdAt", "updatedAt"], result))
+            dict(
+                zip(["id", "record", "type", "meta", "createdAt", "updatedAt"], result)
+            )
             if result
             else None
         )

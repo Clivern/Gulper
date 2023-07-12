@@ -20,12 +20,37 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .logger import Logger, get_logger
-from .database import DatabaseClient, get_database_client
-from .file_system import FileSystem, get_file_system
-from .config import Config, get_config
-from .sqlite import SQLiteClient, get_sqlite_client
-from .schedule import Schedule, get_schedule
-from .storage import LocalStorage, get_local_storage
-from .util import success
-from .util import error
+from dumpitt.module import Config
+from dumpitt.module import DatabaseClient
+from dumpitt.module import Logger
+from dumpitt.module import SQLiteClient
+from dumpitt.module import LocalStorage
+
+
+class Cron:
+    """
+    Cron Core Functionalities
+    """
+
+    def __init__(
+        self,
+        config: Config,
+        db_client: DatabaseClient,
+        logger: Logger,
+        sqlite_client: SQLiteClient,
+        local_storage: LocalStorage,
+    ):
+        self._config = config
+        self._db_client = db_client
+        self._logger = logger
+        self._sqlite_client = sqlite_client
+        self._local_storage = local_storage
+
+    def setup(self):
+        """
+        Setup calls
+        """
+        self._logger.get_logger().info("Connect into the database")
+        self._db_client.connect()
+        self._logger.get_logger().info("Migrate the database tables")
+        self._db_client.migrate()

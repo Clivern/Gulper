@@ -1,6 +1,7 @@
 PYTHON ?= python
 PIP    ?= $(PYTHON) -m pip
 TOX    ?= tox
+RUFF   ?= ruff
 
 
 help: Makefile
@@ -18,6 +19,7 @@ config:
 	$(PIP) install wheel
 	$(PIP) install tox
 	$(PIP) install setuptools-scm
+	$(PIP) install ruff
 
 
 ## test: Run test case.
@@ -49,6 +51,11 @@ version:
 ## release: Release to PyPi
 release:
 	$(PYTHON) -m twine upload --repository-url https://upload.pypi.org/legacy/ dist/* --verbose
+
+
+## fmt: Format the code
+fmt:
+	$(RUFF) format
 
 
 ## install: Install the package locally
