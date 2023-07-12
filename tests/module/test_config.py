@@ -41,7 +41,7 @@ def test_config():
     assert config.get_storages().get("aws_s3_01").get("retention") == "1 years"
     assert (
         config.get_storages().get("aws_s3_01").get("name")
-        == ":dbId_:backupId_:timestamp.tar.gz"
+        == "{dbIdent}_{backupId}.tar.gz"
     )
 
 
