@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 import pytest
-from dumpitt.module import Config, get_config
+from gulper.module import Config, get_config
 
 
 def test_config():

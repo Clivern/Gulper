@@ -20,13 +20,5 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import logging
-import pytest
-from gulper.module import get_logger
-
-
-def test_logger():
-    """Logger Tests"""
-    result = get_logger()
-
-    assert isinstance(result, logging.Logger) == True
+from .file_not_found import FileNotFound
+from .operation_failed import OperationFailed

@@ -20,17 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import click
 
-from dumpitt import __version__
+class FileNotFound(Exception):
+    """File Not Found Exception"""
 
-
-@click.group(help="🐺 A Command Line Tool to Backup and Restore MySQL and PostgreSQL!")
-@click.version_option(version=__version__, help="Show the current version")
-def main():
-    """Main command group for Dumpitt CLI."""
     pass
-
-
-if __name__ == "__main__":
-    main()

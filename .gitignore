@@ -55,4 +55,6 @@ MANIFEST
 venv/
 build/
 
-dumpitt.db
+gulper.db
+
+test.py

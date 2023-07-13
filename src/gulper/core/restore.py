@@ -20,18 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import json
-from typing import Any, Dict, Optional
-from dumpitt.module import Config
-from dumpitt.module import DatabaseClient
-from dumpitt.module import Logger
-from dumpitt.module import SQLiteClient
-from dumpitt.module import LocalStorage
+from gulper.module import Config
+from gulper.module import DatabaseClient
+from gulper.module import Logger
+from gulper.module import SQLiteClient
+from gulper.module import LocalStorage
 
 
-class Backup:
+class Restore:
     """
-    Backup Core Functionalities
+    Restore Core Functionalities
     """
 
     def __init__(
@@ -57,60 +55,15 @@ class Backup:
         self._logger.get_logger().info("Migrate the database tables")
         self._db_client.migrate()
 
-    def list(self, db_ident: Optional[str], backup_time: str) -> list[Dict[str, Any]]:
+    def restore(self, db_ident: str, backup_id: str) -> bool:
         """
-        Get a list of backups
+        Restore a database from a backup
 
         Args:
-            db_ident (str): The database ident
-            backup_time (str): A certain period for the backup
+            db_ident (str): The database Ident
+            backup_id (str): The backup Id
 
         Returns:
-            A list of backups
-        """
-        pass
-
-    def delete(self, id: str) -> bool:
-        """
-        Delete a backup by ID
-
-        Args:
-            id (str): The id of the backup
-
-        Returns:
-            Whether the backup is deleted or not
-        """
-        backup = self._db_client.get_backup_by_id(id)
-
-        meta = json.loads(backup.get("meta"))
-
-        for backup in meta["backups"]:
-            backup_data = backup.split(":")
-            storage = backup_data[0]
-            path = backup_data[1]
-
-        self._db_client.delete_backup(id)
-
-    def get(self, id: str) -> Optional[Dict[str, Any]]:
-        """
-        Get a backup data by ID
-
-        Args:
-            id (str): The id of the backup
-
-        Returns:
-            The backup data or None if backup not found
-        """
-        pass
-
-    def backup(self, db_ident: str) -> bool:
-        """
-        Backup the database
-
-        Args:
-            db_ident (str): The database ident
-
-        Returns:
-            Whether backup succeeded or not
+            Whether the restore succeeded or not
         """
         pass

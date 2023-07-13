@@ -20,37 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from dumpitt.module import Config
-from dumpitt.module import DatabaseClient
-from dumpitt.module import Logger
-from dumpitt.module import SQLiteClient
-from dumpitt.module import LocalStorage
+import click
+
+from gulper import __version__
 
 
-class Cron:
-    """
-    Cron Core Functionalities
-    """
+@click.group(help="🐺 A Command Line Tool to Backup and Restore MySQL and PostgreSQL!")
+@click.version_option(version=__version__, help="Show the current version")
+def main():
+    """Main command group for Gulper CLI."""
+    pass
 
-    def __init__(
-        self,
-        config: Config,
-        db_client: DatabaseClient,
-        logger: Logger,
-        sqlite_client: SQLiteClient,
-        local_storage: LocalStorage,
-    ):
-        self._config = config
-        self._db_client = db_client
-        self._logger = logger
-        self._sqlite_client = sqlite_client
-        self._local_storage = local_storage
 
-    def setup(self):
-        """
-        Setup calls
-        """
-        self._logger.get_logger().info("Connect into the database")
-        self._db_client.connect()
-        self._logger.get_logger().info("Migrate the database tables")
-        self._db_client.migrate()
+if __name__ == "__main__":
+    main()

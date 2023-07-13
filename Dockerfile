@@ -7,17 +7,17 @@ RUN apt update
 # Install MySQL and PostgreSQL client tools
 RUN apt install -y mysql-client postgresql-client python3-pip
 
-# Install dumpitt
-RUN pip3 install dumpitt
+# Install gulper
+RUN pip3 install gulper
 
-# Verify the installation of mysqldump and pg_dump and dumpitt
+# Verify the installation of mysqldump and pg_dump and gulper
 RUN mysqldump --version
 RUN pg_dump --version
-RUN dumpitt --version
+RUN gulper --version
 
 # Set the working directory
 WORKDIR /app
 
 COPY config.yaml /app/config.yaml
 
-CMD ["dumpitt", "--config", "/app/config.yaml"]
+CMD ["gulper", "--config", "/app/config.yaml"]

@@ -20,16 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from dumpitt.module import Config
-from dumpitt.module import DatabaseClient
-from dumpitt.module import Logger
-from dumpitt.module import SQLiteClient
-from dumpitt.module import LocalStorage
+from gulper.module import Config
+from gulper.module import DatabaseClient
+from gulper.module import Logger
+from gulper.module import SQLiteClient
+from gulper.module import LocalStorage
 
 
-class Restore:
+class Cron:
     """
-    Restore Core Functionalities
+    Cron Core Functionalities
     """
 
     def __init__(
@@ -54,16 +54,3 @@ class Restore:
         self._db_client.connect()
         self._logger.get_logger().info("Migrate the database tables")
         self._db_client.migrate()
-
-    def restore(self, db_ident: str, backup_id: str) -> bool:
-        """
-        Restore a database from a backup
-
-        Args:
-            db_ident (str): The database Ident
-            backup_id (str): The backup Id
-
-        Returns:
-            Whether the restore succeeded or not
-        """
-        pass

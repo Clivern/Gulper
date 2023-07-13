@@ -2,14 +2,14 @@
   :width: 700
   :alt: Alternative text
 
-.. image:: https://github.com/Clivern/Dumpitt/actions/workflows/ci.yml/badge.svg?branch=main
+.. image:: https://github.com/Clivern/Gulper/actions/workflows/ci.yml/badge.svg?branch=main
     :alt: Build Status
-    :target: https://github.com/Clivern/Dumpitt/actions/workflows/ci.yml
+    :target: https://github.com/Clivern/Gulper/actions/workflows/ci.yml
 
 |
 
 =======
-Dumpitt
+Gulper
 =======
 
 A Command Line Tool to Backup and Restore MySQL and PostgreSQL.
