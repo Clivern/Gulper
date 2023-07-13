@@ -1,6 +1,6 @@
-.. image:: https://image.api.playstation.com/vulcan/img/rnd/202108/2318/laMdtTUhSHB2neSymEjIt5oF.jpg
+.. image:: https://images.unsplash.com/photo-1581059729226-c493d3086748
   :width: 700
-  :alt: Alternative text
+  :alt: Cover Photo
 
 .. image:: https://github.com/Clivern/Gulper/actions/workflows/ci.yml/badge.svg?branch=main
     :alt: Build Status
