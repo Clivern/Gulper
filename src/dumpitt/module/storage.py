@@ -175,7 +175,7 @@ class LocalStorage(Storage):
             The file data
         """
         remote_file_path = os.path.join(self.get_base_path(), remote_file_name)
-        return self.get_file_stats(remote_file_path)
+        return self._file_system.get_file_stats(remote_file_path)
 
     def get_files(self) -> list[Dict[str, Any]]:
         """
