@@ -22,7 +22,7 @@
 
 import os
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import boto3
 from botocore.client import BaseClient as Boto3Client
 from .file_system import FileSystem
@@ -344,7 +344,7 @@ def get_s3_storage(
 
 
 def get_boto3_client(
-    access_key_id: str, secret_access_key: str, region_name
+    access_key_id: str, secret_access_key: str, region_name, endpoint_url: Optional[str]
 ) -> Boto3Client:
     """
     Get Boto3 Client
@@ -356,12 +356,21 @@ def get_boto3_client(
     Returns:
         The Boto3 Client
     """
-    return boto3.client(
-        "s3",
-        aws_access_key_id=access_key_id,
-        aws_secret_access_key=secret_access_key,
-        region_name=region_name,
-    )
+    if not endpoint_url:
+        return boto3.client(
+            "s3",
+            aws_access_key_id=access_key_id,
+            aws_secret_access_key=secret_access_key,
+            region_name=region_name,
+        )
+    else:
+        return boto3.client(
+            "s3",
+            aws_access_key_id=access_key_id,
+            aws_secret_access_key=secret_access_key,
+            region_name=region_name,
+            endpoint_url=endpoint_url,
+        )
 
 
 def get_storage(config: Config, storage_name: str) -> Storage:
@@ -378,6 +387,7 @@ def get_storage(config: Config, storage_name: str) -> Storage:
                 storage.get("access_key_id"),
                 storage.get("secret_access_key"),
                 storage.get("region"),
+                storage.get("endpoint_url", None),
             ),
             storage.get("bucket_name"),
             storage.get("path"),
