@@ -34,7 +34,18 @@ storage:
     secret_access_key: your_secret_access_key
     bucket_name: your_bucket_name
     region: your_region
-    path: /backups
+    path: /
+    retention: 1 years
+    name: "{dbIdent}_{backupId}.tar.gz"
+
+  do_s3_01:
+    type: s3
+    access_key_id: your_access_key_id
+    secret_access_key: your_secret_access_key
+    endpoint_url: https://nyc3.digitaloceanspaces.com
+    bucket_name: your_bucket_name
+    region: nyc3
+    path: /team_name/db_backups
     retention: 1 years
     name: "{dbIdent}_{backupId}.tar.gz"
 
