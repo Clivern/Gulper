@@ -24,6 +24,8 @@ import os
 import shutil
 import tarfile
 import hashlib
+from typing import Any, Dict
+from datetime import datetime
 
 
 class FileSystem:
@@ -59,7 +61,7 @@ class FileSystem:
         with tarfile.open(tar_file_path, "r:gz") as tar:
             tar.extractall(extract_to)
 
-    def backup(self, from_path: str, to_path: str) -> bool:
+    def copy_file(self, from_path: str, to_path: str) -> bool:
         """
         Backup a file.
 
@@ -84,34 +86,6 @@ class FileSystem:
         # Verify the backup
         if not os.path.exists(to_path):
             raise IOError("Backup file was not created successfully")
-
-        return True
-
-    def restore(self, from_path: str, to_path: str) -> bool:
-        """
-        Restore a file.
-
-        Args:
-            from_path (str): The path to the backup file.
-            to_path (str): The path where the file will be restored.
-
-        Returns:
-            bool: True if the restoration was successful, False otherwise.
-
-        Raises:
-            FileNotFoundError: If the backup file doesn't exist.
-            IOError: If the file couldn't be restored.
-        """
-        # Ensure the backup file exists
-        if not os.path.exists(from_path):
-            raise FileNotFoundError(f"Backup file not found: {from_path}")
-
-        # Copy the backup file to the target path
-        shutil.copy2(from_path, to_path)
-
-        # Verify the restoration
-        if not os.path.exists(to_path):
-            raise IOError("File was not restored successfully")
 
         return True
 
@@ -220,6 +194,35 @@ class FileSystem:
                 sha256_hash.update(chunk)
 
         return sha256_hash.hexdigest()
+
+    def get_file_stats(self, file_path: str) -> Dict[str, Any]:
+        """
+        Get File Stats
+
+        Args:
+            file_path (str): The file path
+
+        Returns:
+            The file stats
+        """
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError(f"File {file_path} not found")
+
+        file_stats = os.stat(file_path)
+
+        return {
+            "path": file_path,
+            "size": file_stats.st_size,
+            "mod_time": datetime.fromtimestamp(file_stats.st_mtime).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+            "access_time": datetime.fromtimestamp(file_stats.st_atime).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+            "create_time": datetime.fromtimestamp(file_stats.st_ctime).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+        }
 
 
 def get_file_system() -> FileSystem:

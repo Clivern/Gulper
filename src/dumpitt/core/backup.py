@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import json
 from typing import Any, Dict, Optional
 from dumpitt.module import Config
 from dumpitt.module import DatabaseClient
@@ -79,7 +80,16 @@ class Backup:
         Returns:
             Whether the backup is deleted or not
         """
-        pass
+        backup = self._db_client.get_backup_by_id(id)
+
+        meta = json.loads(backup.get("meta"))
+
+        for backup in meta["backups"]:
+            backup_data = backup.split(":")
+            storage = backup_data[0]
+            path = backup_data[1]
+
+        self._db_client.delete_backup(id)
 
     def get(self, id: str) -> Optional[Dict[str, Any]]:
         """

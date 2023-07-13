@@ -56,7 +56,7 @@ class SQLiteClient:
         new_db_path = f"{self._temp_path}/{new_db_name}.db"
 
         # Copy DB to a Temp directory
-        self._file_system.backup(db_path, new_db_path)
+        self._file_system.copy_file(db_path, new_db_path)
 
         # Create a tar file of the db and checksum
         tar_file_path = f"{self._temp_path}/{new_db_name}.tar.gz"
@@ -93,7 +93,7 @@ class SQLiteClient:
             raise Exception("checksum doesn't match!")
 
         # Restore a database file
-        self._file_system.restore(current_db_path, db_path)
+        self._file_system.copy_file(current_db_path, db_path)
 
         # Cleanup files
         self._file_system.delete_file(current_db_checksum)
