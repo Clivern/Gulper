@@ -22,11 +22,11 @@
 
 import logging
 import pytest
-from gulper.module import get_logger
+from gulper.module import get_logger, Logger
 
 
 def test_logger():
     """Logger Tests"""
     result = get_logger()
 
-    assert isinstance(result, logging.Logger) == True
+    assert isinstance(result, Logger) == True

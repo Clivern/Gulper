@@ -87,7 +87,6 @@ class Backup:
             storage_name = backup["storage_name"]
             file = backup["file"]
 
-
             backup_data = backup.split(":")
             storage = backup_data[0]
             path = backup_data[1]

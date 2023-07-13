@@ -37,7 +37,7 @@ def test_config():
         == "your_secret_access_key"
     )
     assert config.get_storages().get("aws_s3_01").get("region") == "your_region"
-    assert config.get_storages().get("aws_s3_01").get("path") == "/backups"
+    assert config.get_storages().get("aws_s3_01").get("path") == "/"
     assert config.get_storages().get("aws_s3_01").get("retention") == "1 years"
     assert (
         config.get_storages().get("aws_s3_01").get("name")
