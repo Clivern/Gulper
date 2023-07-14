@@ -21,50 +21,19 @@
 # SOFTWARE.
 
 from .database import Database
+from .sqlite import get_sqlite
+from .config import Config
+from .file_system import get_file_system
 
 
-class PostgreSQL(Database):
-    """
-    Manages PostgreSQL database operations,
-    including backups, restores and connection testing.
-    """
+def get_database(config: Config, db_name: str) -> Database:
+    db_config = config.get_database_config(db_name)
 
-    def backup(self) -> str:
-        """
-        Backup the database
+    if db_config is None:
+        raise Exception(f"Database {db_name} not found")
 
-        Returns:
-            str: the path to the backup
-        """
-        pass
-
-    def restore(self, backup_path: str) -> bool:
-        """
-        Restore the database from a backup
-
-        Args:
-            backup_path (str): The path to .tar.gz backup
-
-        Returns:
-            bool: whether the restore succeeded or not
-        """
-        pass
-
-    def connect(self) -> bool:
-        """
-        Connect into the database
-
-        Returns:
-            bool: whether the connection is established or not
-        """
-        pass
-
-
-def get_postgresql() -> PostgreSQL:
-    """
-    Creates and returns a new PostgreSQL instance.
-
-    Returns:
-        PostgreSQL: A new instance of the PostgreSQL class.
-    """
-    return PostgreSQL()
+    # TODO: Add MySQL and PostgreSQL
+    if db_config.get("type") == "sqlite":
+        return get_sqlite(
+            get_file_system(), config.get_temp_dir(), db_config.get("path")
+        )

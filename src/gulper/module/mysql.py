@@ -20,14 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import List, Any, Dict
-import subprocess
-import shlex
+from typing import Any, Dict, Optional
+from .database import Database
 
 
-class MySQLClient:
+class MySQL(Database):
     """
-    A wrapper class for MySQL database operations, primarily focused on database dumping.
+    Manages MySQL database operations,
+    including backups, restores and connection testing.
     """
 
     def __init__(
@@ -35,93 +35,84 @@ class MySQLClient:
         host: str,
         username: str,
         password: str,
-        port: int = 3306,
-        databases: List[str] = [],
+        port: int,
+        databases: list[str],
+        temp_path: str,
+        options: Optional[Dict[str, Any]],
     ):
         """
-        Initialize the MySQL wrapper.
+        Initializes the MySQL instance
 
         Args:
-            host (str): MySQL host
-            username (str): MySQL username
-            password (str): MySQL password
-            port (int): MySQL port
-            databases (List[str], optional): Optional MySQL database names. Defaults to all databases.
+            host (str): The mysql database host
+            username (str): The mysql database username
+            password (str): The mysql database password
+            port (int): The mysql database port
+            databases (list[str]): The database to backup or empty list if all databases
+            temp_path (str): The temp path to use for backup
+            options (Optional[Dict[str, Any]]): The list of options for backups
         """
-        self._host: str = host
-        self._username: str = username
-        self._password: str = password
-        self._port: int = port
-        self._databases: List[str] = databases
+        self._host = host
+        self._username = username
+        self._password = password
+        self._port = port
+        self._databases = databases
+        self._temp_path = temp_path
+        self._options = options
 
-    def dump(self, output_file: str, options: Dict[str, Any]) -> None:
+    def backup(self) -> str:
         """
-        Dump the MySQL database(s) using mysqldump.
-
-        This method constructs and executes a mysqldump command to create a backup
-        of the specified database(s). Additional options can be passed as keyword arguments.
-
-        Args:
-            output_file (str): Output file path where the dump will be saved.
-            options (Dict[str, Any]): Additional options for mysqldump.
-        """
-        command = self._build_dump_command(output_file, options)
-        self._execute_command(command)
-
-    def _build_dump_command(self, output_file: str, options: Dict[str, Any]) -> str:
-        """
-        Build the mysqldump command with options.
-
-        This method constructs the mysqldump command string based on the instance attributes
-        and any additional options provided.
-
-        Args:
-            output_file (str): Output file path where the dump will be saved.
-            options (Dict[str, Any]): Additional options for mysqldump.
+        Backup the database
 
         Returns:
-            str: The complete mysqldump command string.
-
-        Note:
-            Boolean options are treated as flags (added if True).
-            String options are added as key=value.
-            List options are added as multiple instances of key=item.
+            str: the path to the backup
         """
-        command = f"mysqldump -h {self._host} -u {self._username} -P {self._port} -p{self._password}"
+        pass
 
-        if len(self._databases) > 0:
-            dbs = " ".join(self._databases)
-            command += f" --databases {dbs}"
-        else:
-            command += " --all-databases"
-
-        for key, value in options.items():
-            if isinstance(value, bool):
-                if value:
-                    command += f" --{key}"
-            elif isinstance(value, str):
-                command += f" --{key}={value}"
-            elif isinstance(value, list):
-                for item in value:
-                    command += f" --{key}={item}"
-
-        command += f" > {output_file}"
-
-        return command
-
-    def _execute_command(self, command: str) -> None:
+    def restore(self, backup_path: str) -> bool:
         """
-        Execute a shell command.
-
-        This method is responsible for executing the constructed mysqldump command.
+        Restore the database from a backup
 
         Args:
-            command (str): Command string to execute
+            backup_path (str): The path to .tar.gz backup
+
+        Returns:
+            bool: whether the restore succeeded or not
         """
-        subprocess.check_call(shlex.split(command), shell=False)
+        pass
+
+    def connect(self) -> bool:
+        """
+        Connect into the database
+
+        Returns:
+            bool: whether the connection is established or not
+        """
+        pass
 
 
-def get_mysql_client(
-    host: str, username: str, password: str, port: int = 3306, databases: List[str] = []
-) -> MySQLClient:
-    return MySQLClient(host, username, password, port, databases)
+def get_mysql(
+    host: str,
+    username: str,
+    password: str,
+    port: int,
+    databases: list[str],
+    temp_path: str,
+    options: Optional[Dict[str, Any]],
+) -> MySQL:
+    """
+    Get MySQL instance
+
+    Args:
+        host (str): The mysql database host
+        username (str): The mysql database username
+        password (str): The mysql database password
+        port (int): The mysql database port
+        databases (list[str]): The database to backup or empty list if all databases
+        temp_path (str): The temp path to use for backup
+        options (Optional[Dict[str, Any]]): The list of options for backups
+
+    Returns:
+        MySQL: The mysql instance
+    """
+    return MySQL(host, username, password, port, databases, temp_path, options)

@@ -23,10 +23,10 @@
 import json
 from typing import Any, Dict, Optional
 from gulper.module import Config
-from gulper.module import DatabaseClient
+from gulper.module import State
 from gulper.module import Logger
-from gulper.module import SQLiteClient
-from gulper.module import LocalStorage
+from gulper.module import get_storage
+from gulper.module import get_database
 
 
 class Backup:
@@ -34,27 +34,19 @@ class Backup:
     Backup Core Functionalities
     """
 
-    def __init__(
-        self,
-        config: Config,
-        db_client: DatabaseClient,
-        logger: Logger,
-        sqlite_client: SQLiteClient,
-        local_storage: LocalStorage,
-    ):
+    def __init__(self, config: Config, state: State, logger: Logger):
         self._config = config
-        self._db_client = db_client
+        self._state = state
         self._logger = logger
-        self._sqlite_client = sqlite_client
 
     def setup(self):
         """
         Setup calls
         """
-        self._logger.get_logger().info("Connect into the database")
-        self._db_client.connect()
-        self._logger.get_logger().info("Migrate the database tables")
-        self._db_client.migrate()
+        self._logger.get_logger().info("Connect into the state database")
+        self._state.connect()
+        self._logger.get_logger().info("Migrate the state database tables")
+        self._state.migrate()
 
     def list(self, db_ident: Optional[str], backup_time: str) -> list[Dict[str, Any]]:
         """
@@ -77,19 +69,25 @@ class Backup:
             id (str): The id of the backup
 
         Returns:
-            Whether the backup is deleted or not
+            bool: whether the backup is deleted or not
         """
-        backup = self._db_client.get_backup_by_id(id)
+        backup = self._state.get_backup_by_id(id)
 
         meta = json.loads(backup.get("meta"))
 
         for backup in meta["backups"]:
-            storage_name = backup["storage_name"]
-            file = backup["file"]
-
-            backup_data = backup.split(":")
-            storage = backup_data[0]
-            path = backup_data[1]
+            try:
+                storage = get_storage(self._config, backup.get("storage_name"))
+                storage.delete_file(backup.get("file"))
+            except Exception as e:
+                self._logger.get_logger().error(
+                    "Unable to delete backup {} file {} from storage {}: {}".format(
+                        id,
+                        backup.get("file"),
+                        backup.get("storage_name"),
+                        str(e),
+                    )
+                )
 
         self._db_client.delete_backup(id)
 
@@ -105,7 +103,7 @@ class Backup:
         """
         pass
 
-    def backup(self, db_ident: str) -> bool:
+    def backup(self, db_name: str) -> bool:
         """
         Backup the database
 
@@ -116,3 +114,8 @@ class Backup:
             Whether backup succeeded or not
         """
         pass
+
+    def retention(self):
+        """
+        Run backups retention
+        """

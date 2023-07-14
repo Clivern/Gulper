@@ -20,43 +20,44 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
 import uuid
 import sqlite3
-import os
+from .database import Database
 from .file_system import FileSystem
 
 
-class SQLiteClient:
+class SQLite(Database):
     """
-    Manages SQLite database operations, including backups and connection testing.
+    Manages SQLite database operations,
+    including backups, restores and connection testing.
     """
 
-    def __init__(self, temp_path: str, file_system: FileSystem):
+    def __init__(self, file_system: FileSystem, temp_path: str, db_path: str):
         """
-        Initializes the SQLite instance with a temporary directory path and a FileSystem instance.
+        Initializes the SQLite instance
 
         Args:
-            temp_path (str): The temporary directory path for storing database backups.
             file_system (FileSystem): An instance of the FileSystem class for file operations.
+            temp_path (str): The temporary directory path for storing database backups.
+            db_path (str): The database path
         """
-        self._temp_path = temp_path.rstrip("/")
         self._file_system = file_system
+        self._temp_path = temp_path.rstrip("/")
+        self._db_path = db_path
 
-    def backup(self, db_path: str) -> str:
+    def backup(self) -> str:
         """
         Creates a backup of a SQLite database.
 
-        Args:
-            db_path (str): The path to the SQLite database file to be backed up.
-
         Returns:
-            str: The path to the backup file.
+            str: the path to the backup file.
         """
         new_db_name = uuid.uuid4()
         new_db_path = f"{self._temp_path}/{new_db_name}.db"
 
         # Copy DB to a Temp directory
-        self._file_system.copy_file(db_path, new_db_path)
+        self._file_system.copy_file(self._db_path, new_db_path)
 
         # Create a tar file of the db and checksum
         tar_file_path = f"{self._temp_path}/{new_db_name}.tar.gz"
@@ -71,13 +72,15 @@ class SQLiteClient:
 
         return tar_file_path
 
-    def restore(self, backup_path: str, db_path: str):
+    def restore(self, backup_path: str) -> bool:
         """
         Restore SQLite database
 
         Args:
             backup_path (str): The backup path
-            db_path (str): The database path
+
+        Returns:
+            bool: whether the restore succeeded or not
         """
         self._file_system.extract_tar_gz(backup_path, self._temp_path)
 
@@ -90,43 +93,41 @@ class SQLiteClient:
         checksum = self._file_system.read_file(current_db_checksum)
 
         if checksum != self._file_system.get_sha256_hash(current_db_path):
-            raise Exception("checksum doesn't match!")
+            raise Exception("Database checksum doesn't match!")
 
         # Restore a database file
-        self._file_system.copy_file(current_db_path, db_path)
+        self._file_system.copy_file(current_db_path, self._db_path)
 
         # Cleanup files
         self._file_system.delete_file(current_db_checksum)
         self._file_system.delete_file(backup_path)
         self._file_system.delete_file(current_db_path)
 
-    def test_connection(self, db_path: str) -> bool:
+    def connect(self) -> bool:
         """
-        Tests the connection to a SQLite database.
-
-        Args:
-            db_path (str): The path to the SQLite database file.
+        Tests the connection to SQLite database.
 
         Returns:
-            bool: True if the connection was successful, False otherwise.
+            bool: whether the connection succeeded or not
         """
         try:
-            conn = sqlite3.connect(db_path)
+            conn = sqlite3.connect(self._db_path)
             conn.close()
             return True
         except sqlite3.Error:
             return False
 
 
-def get_sqlite_client(temp_path: str, file_system: FileSystem) -> SQLiteClient:
+def get_sqlite(file_system: FileSystem, temp_path: str, db_path: str) -> SQLite:
     """
     Creates and returns a new SQLite instance.
 
     Args:
-        temp_path (str): The temporary directory path for storing database backups.
         file_system (FileSystem): An instance of the FileSystem class for file operations.
+        temp_path (str): The temporary directory path for storing database backups.
+        db_path (str): The SQLite database path.
 
     Returns:
         SQLite: A new instance of the SQLite class.
     """
-    return SQLiteClient(temp_path, file_system)
+    return SQLite(file_system, temp_path, db_path)

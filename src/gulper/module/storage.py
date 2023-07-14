@@ -21,12 +21,12 @@
 # SOFTWARE.
 
 import os
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
 import boto3
-from botocore.client import BaseClient as Boto3Client
-from .file_system import FileSystem
 from .config import Config
+from abc import ABC, abstractmethod
+from .file_system import FileSystem
+from typing import Dict, Any, Optional
+from botocore.client import BaseClient as Boto3Client
 
 
 class Storage(ABC):

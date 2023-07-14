@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 from gulper.module import Config
-from gulper.module import DatabaseClient
+from gulper.module import State
 from gulper.module import Logger
 from gulper.module import SQLiteClient
 from gulper.module import LocalStorage
@@ -35,13 +35,13 @@ class Cron:
     def __init__(
         self,
         config: Config,
-        db_client: DatabaseClient,
+        state: State,
         logger: Logger,
         sqlite_client: SQLiteClient,
         local_storage: LocalStorage,
     ):
         self._config = config
-        self._db_client = db_client
+        self._state = state
         self._logger = logger
         self._sqlite_client = sqlite_client
         self._local_storage = local_storage
@@ -50,7 +50,7 @@ class Cron:
         """
         Setup calls
         """
-        self._logger.get_logger().info("Connect into the database")
-        self._db_client.connect()
-        self._logger.get_logger().info("Migrate the database tables")
-        self._db_client.migrate()
+        self._logger.get_logger().info("Connect into the state database")
+        self._state.connect()
+        self._logger.get_logger().info("Migrate the state database tables")
+        self._state.migrate()

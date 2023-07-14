@@ -49,6 +49,15 @@ class Config:
         with open(file_path, "r") as file:
             return yaml.safe_load(file)
 
+    def get_temp_dir(self) -> str:
+        """
+        Get temp dir path
+
+        Returns:
+            str: The temp dir path
+        """
+        return self.config.get("temp_dir", "/tmp")
+
     def get_storages(self) -> Dict[str, Any]:
         """
         Get all storage configurations.
@@ -86,7 +95,7 @@ class Config:
         Returns:
             Optional[Dict[str, Any]]: Storage configuration if found; otherwise None.
         """
-        return self.config.get("storage").get(storage_name)
+        return self.config.get("storage").get(storage_name, None)
 
     def get_schedule_config(self, schedule_name: str) -> Optional[Dict[str, Any]]:
         """
@@ -98,7 +107,7 @@ class Config:
         Returns:
             Optional[Dict[str, Any]]: Schedule configuration if found; otherwise None.
         """
-        return self.config.get("schedule").get(schedule_name)
+        return self.config.get("schedule").get(schedule_name, None)
 
     def get_database_config(self, database_name: str) -> Optional[Dict[str, Any]]:
         """
@@ -110,7 +119,7 @@ class Config:
         Returns:
             Optional[Dict[str, Any]]: Database configuration if found; otherwise None.
         """
-        return self.config.get("database").get(database_name)
+        return self.config.get("database").get(database_name, None)
 
     def _parse_retention(self, retention_str: str) -> int:
         """

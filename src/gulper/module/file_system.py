@@ -216,12 +216,6 @@ class FileSystem:
             "mod_time": datetime.fromtimestamp(file_stats.st_mtime).strftime(
                 "%Y-%m-%d %H:%M:%S"
             ),
-            "access_time": datetime.fromtimestamp(file_stats.st_atime).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
-            "create_time": datetime.fromtimestamp(file_stats.st_ctime).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
         }
 
 
