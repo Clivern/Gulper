@@ -25,7 +25,6 @@ from .database import Database
 from .dbs import get_database
 from .file_system import FileSystem, get_file_system
 from .config import Config, get_config
-from .sqlite import SQLiteClient, get_sqlite_client
 from .schedule import Schedule, get_schedule
 from .storage import LocalStorage, S3Storage, Storage, get_storage
 from .state import State
