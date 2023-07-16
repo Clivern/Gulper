@@ -20,11 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import json
 from gulper.module import Config
 from gulper.module import State
 from gulper.module import Logger
-from gulper.module import SQLiteClient
-from gulper.module import LocalStorage
+from gulper.module import get_storage
+from gulper.module import get_database
+from gulper.exception import BackupNotFound
+from gulper.exception import OperationFailed
 
 
 class Restore:
@@ -37,14 +40,10 @@ class Restore:
         config: Config,
         state: State,
         logger: Logger,
-        sqlite_client: SQLiteClient,
-        local_storage: LocalStorage,
     ):
         self._config = config
         self._state = state
         self._logger = logger
-        self._sqlite_client = sqlite_client
-        self._local_storage = local_storage
 
     def setup(self):
         """
@@ -55,15 +54,51 @@ class Restore:
         self._logger.get_logger().info("Migrate the state database tables")
         self._state.migrate()
 
-    def restore(self, db_ident: str, backup_id: str) -> bool:
+    def restore(self, db_name: str, backup_id: str) -> bool:
         """
         Restore a database from a backup
 
         Args:
-            db_ident (str): The database Ident
-            backup_id (str): The backup Id
+            db_name (str): The database name
+            backup_id (str): The backup id
 
         Returns:
-            Whether the restore succeeded or not
+            bool: whether the restore succeeded or not
         """
-        pass
+        backup = self._state.get_backup_by_id(id)
+
+        if backup is None:
+            raise BackupNotFound(f"Backup with id {id} not found!")
+
+        backup = True
+        meta = json.loads(backup.get("meta"))
+
+        file = None
+        for backup in meta["backups"]:
+            try:
+                storage = get_storage(self._config, backup.get("storage_name"))
+                storage.download_file(backup.get("file"), self._config.get_temp_dir())
+                file = backup.get("file")
+            except Exception as e:
+                backup = False
+                self._logger.get_logger().error(
+                    "Unable to restore backup {} file {} in storage {}: {}".format(
+                        id,
+                        backup.get("file"),
+                        backup.get("storage_name"),
+                        str(e),
+                    )
+                )
+            if backup:
+                break
+
+        if file is None:
+            raise BackupNotFound(f"Backup with id {id} not found!")
+
+        try:
+            database = get_database(self._config, backup.get("dbIdent"))
+            database.restore("{}/{}".format(self._config.get_temp_dir(), file))
+        except Exception as e:
+            raise OperationFailed("Failed to restore database {}: {}".format(backup.get("dbIdent"), str(e)))
+
+        return True

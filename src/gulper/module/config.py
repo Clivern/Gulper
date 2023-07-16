@@ -56,7 +56,7 @@ class Config:
         Returns:
             str: The temp dir path
         """
-        return self.config.get("temp_dir", "/tmp")
+        return self.config.get("temp_dir", "/tmp").lstrip("/")
 
     def get_storages(self) -> Dict[str, Any]:
         """

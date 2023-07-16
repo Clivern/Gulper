@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .file_not_found import FileNotFound
-from .operation_failed import OperationFailed
-from .backup_not_found import BackupNotFound
+
+class BackupNotFound(Exception):
+    """Backup Not Found Exception"""
+
+    pass

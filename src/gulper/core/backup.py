@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import uuid
 import json
 from typing import Any, Dict, Optional
 from gulper.module import Config
@@ -27,6 +28,7 @@ from gulper.module import State
 from gulper.module import Logger
 from gulper.module import get_storage
 from gulper.module import get_database
+from gulper.exception import BackupNotFound
 
 
 class Backup:
@@ -48,18 +50,46 @@ class Backup:
         self._logger.get_logger().info("Migrate the state database tables")
         self._state.migrate()
 
-    def list(self, db_ident: Optional[str], backup_time: str) -> list[Dict[str, Any]]:
+    def list(
+        self, db_name: Optional[str], since: Optional[str]
+    ) -> list[Dict[str, Any]]:
         """
         Get a list of backups
 
         Args:
-            db_ident (str): The database ident
+            db_name (str): The database name
             backup_time (str): A certain period for the backup
 
         Returns:
-            A list of backups
+            list[Dict[str, Any]]: A list of backups
         """
-        pass
+        backups = self._state.get_backups(db_name, since)
+
+        i = 0
+        for backup in backups:
+            paths = []
+            backups_exists = True
+            meta = json.loads(backup.get("meta"))
+            for backup in meta["backups"]:
+                try:
+                    storage = get_storage(self._config, backup.get("storage_name"))
+                    file = storage.get_file(backup.get("file"))
+                    paths.append(file.get("path"))
+                except Exception as e:
+                    backups_exists = False
+                    self._logger.get_logger().error(
+                        "Unable to locate backup {} file {} in storage {}: {}".format(
+                            id,
+                            backup.get("file"),
+                            backup.get("storage_name"),
+                            str(e),
+                        )
+                    )
+            backups[i]["paths"] = paths
+            backups[i]["backups_exists"] = backups_exists
+            i += 1
+
+        return backups
 
     def delete(self, id: str) -> bool:
         """
@@ -72,6 +102,9 @@ class Backup:
             bool: whether the backup is deleted or not
         """
         backup = self._state.get_backup_by_id(id)
+
+        if backup is None:
+            raise BackupNotFound(f"Backup with id {id} not found!")
 
         meta = json.loads(backup.get("meta"))
 
@@ -91,7 +124,7 @@ class Backup:
 
         self._db_client.delete_backup(id)
 
-    def get(self, id: str) -> Optional[Dict[str, Any]]:
+    def get(self, id: str) -> Dict[str, Any]:
         """
         Get a backup data by ID
 
@@ -99,23 +132,83 @@ class Backup:
             id (str): The id of the backup
 
         Returns:
-            The backup data or None if backup not found
+            Dict[str, Any]: the backup data or None if backup not found
         """
-        pass
+        backup = self._state.get_backup_by_id(id)
+
+        if backup is None:
+            raise BackupNotFound(f"Backup with id {id} not found!")
+
+        meta = json.loads(backup.get("meta"))
+
+        paths = []
+        backups_exists = True
+
+        for backup in meta["backups"]:
+            try:
+                storage = get_storage(self._config, backup.get("storage_name"))
+                file = storage.get_file(backup.get("file"))
+                paths.append(file.get("path"))
+            except Exception as e:
+                backups_exists = False
+                self._logger.get_logger().error(
+                    "Unable to locate backup {} file {} in storage {}: {}".format(
+                        id,
+                        backup.get("file"),
+                        backup.get("storage_name"),
+                        str(e),
+                    )
+                )
+
+        backup["paths"] = paths
+        backup["backups_exists"] = backups_exists
+
+        return backup
 
     def backup(self, db_name: str) -> bool:
         """
         Backup the database
 
         Args:
-            db_ident (str): The database ident
+            db_name (str): The database name
 
         Returns:
-            Whether backup succeeded or not
+            bool: whether backup succeeded or not
         """
-        pass
+        db = get_database(self._config, db_name)
 
-    def retention(self):
-        """
-        Run backups retention
-        """
+        file_path = db.backup()
+        backup_id = str(uuid.uuid4())
+
+        backups = []
+        db_config = self._config.get_database_config(db_name)
+        storages = db_config.get("storage", [])
+
+        for storage_name in storages:
+            storage = get_storage(self._config, storage_name)
+            storage_config = self._config.get_storage_config(storage_name)
+
+            if storage_config is None:
+                raise Exception(f"Storage {storage_name} configs are missing!")
+
+            remote_file_name = storage_config.get("name").replace("{dbIdent}", db_name)
+            remote_file_name = remote_file_name.replace("{backupId}", backup_id)
+
+            try:
+                storage.upload_file(file_path, remote_file_name)
+                backups.append({"storage_name": storage_name, "file": remote_file_name})
+            except Exception as e:
+                self._logger.get_logger().error(
+                    f"Unable to upload file {file_path} to storage {storage_name}: {e}"
+                )
+
+        self._state.insert_backup(
+            {
+                "id": backup_id,
+                "dbIdent": db_name,
+                "meta": json.dumps({"backups": backups}),
+                "lastStatus": "success" if len(backups) == len(storages) else "failure",
+            }
+        )
+
+        return True if len(backups) == len(storages) else False
