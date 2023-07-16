@@ -20,8 +20,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from gulper.core import Restore as RestoreCore
+from gulper.core import Restore
 
 
-class Restore:
-    pass
+class RestoreCommand:
+    """
+    Restore Command
+    """
+
+    def __init__(self, restore: Restore):
+        """
+        Class Constructor
+
+        Args:
+            restore (Restore): The restore class instance
+        """
+        self._restore = restore

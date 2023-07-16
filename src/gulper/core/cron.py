@@ -23,8 +23,6 @@
 from gulper.module import Config
 from gulper.module import State
 from gulper.module import Logger
-from gulper.module import SQLiteClient
-from gulper.module import LocalStorage
 
 
 class Cron:
@@ -37,14 +35,10 @@ class Cron:
         config: Config,
         state: State,
         logger: Logger,
-        sqlite_client: SQLiteClient,
-        local_storage: LocalStorage,
     ):
         self._config = config
         self._state = state
         self._logger = logger
-        self._sqlite_client = sqlite_client
-        self._local_storage = local_storage
 
     def setup(self):
         """

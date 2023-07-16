@@ -79,6 +79,7 @@ class Restore:
                 storage = get_storage(self._config, backup.get("storage_name"))
                 storage.download_file(backup.get("file"), self._config.get_temp_dir())
                 file = backup.get("file")
+                backup = True
             except Exception as e:
                 backup = False
                 self._logger.get_logger().error(
@@ -89,7 +90,7 @@ class Restore:
                         str(e),
                     )
                 )
-            if backup:
+            if backup and file:
                 break
 
         if file is None:
@@ -99,6 +100,10 @@ class Restore:
             database = get_database(self._config, backup.get("dbIdent"))
             database.restore("{}/{}".format(self._config.get_temp_dir(), file))
         except Exception as e:
-            raise OperationFailed("Failed to restore database {}: {}".format(backup.get("dbIdent"), str(e)))
+            raise OperationFailed(
+                "Failed to restore database {}: {}".format(
+                    backup.get("dbIdent"), str(e)
+                )
+            )
 
         return True

@@ -20,8 +20,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from gulper.core import Backup as BackupCore
+from gulper.core import Backup
 
 
-class Backup:
-    pass
+class BackupCommand:
+    """
+    Backup Command
+    """
+
+    def __init__(self, backup: Backup):
+        """
+        Class Constructor
+
+        Args:
+            backup (Backup): backup core instance
+        """
+        self._backup = backup
