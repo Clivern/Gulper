@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import Optional
 from gulper.core import Backup
 
 
@@ -36,3 +37,28 @@ class BackupCommand:
             backup (Backup): backup core instance
         """
         self._backup = backup
+        self._backup.setup()
+
+    def list(self, db_name: Optional[str], since: Optional[str]):
+        backups = self._backup.list(db_name, since)
+        print(backups)
+
+    def delete(self, id: str):
+        result = self._backup.delete(id)
+
+        if result:
+            print("Backup deleted successfully!")
+        else:
+            print("Backup failed!")
+
+    def get(self, id: str):
+        result = self._backup.get(id)
+        print(result)
+
+    def backup(self, db_name: str):
+        result = self._backup.backup(db_name)
+
+        if result:
+            print("Backup succeeded successfully!")
+        else:
+            print("Backup failed!")

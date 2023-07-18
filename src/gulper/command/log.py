@@ -20,20 +20,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from gulper.core import Cron
+from gulper.core import Log
 
 
-class CronCommand:
+class LogCommand:
     """
-    Cron Command
+    Log Command
     """
 
-    def __init__(self, cron: Cron):
+    def __init__(self, log: Log):
         """
         Class Constructor
 
         Args:
-            cron (Cron): The cron class instance
+            log (Log): The log class instance
         """
-        self._cron = cron
-        self._cron.setup()
+        self._log = log
+        self._log.setup()

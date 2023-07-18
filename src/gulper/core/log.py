@@ -20,20 +20,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from gulper.core import Cron
+from gulper.module import Config
+from gulper.module import State
+from gulper.module import Logger
 
 
-class CronCommand:
+class Log:
     """
-    Cron Command
+    Log Core Functionalities
     """
 
-    def __init__(self, cron: Cron):
-        """
-        Class Constructor
+    def __init__(
+        self,
+        config: Config,
+        state: State,
+        logger: Logger,
+    ):
+        self._config = config
+        self._state = state
+        self._logger = logger
 
-        Args:
-            cron (Cron): The cron class instance
+    def setup(self):
         """
-        self._cron = cron
-        self._cron.setup()
+        Setup calls
+        """
+        self._logger.get_logger().info("Connect into the state database")
+        self._state.connect()
+        self._logger.get_logger().info("Migrate the state database tables")
+        self._state.migrate()

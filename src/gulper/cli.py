@@ -22,6 +22,10 @@
 
 import click
 from gulper import __version__
+from gulper.command import BackupCommand
+from gulper.command import CronCommand
+from gulper.command import RestoreCommand
+from gulper.command import LogCommand
 
 
 @click.group(

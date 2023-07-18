@@ -36,3 +36,4 @@ class RestoreCommand:
             restore (Restore): The restore class instance
         """
         self._restore = restore
+        self._restore.setup()

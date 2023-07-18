@@ -23,3 +23,4 @@
 from .backup import BackupCommand
 from .cron import CronCommand
 from .restore import RestoreCommand
+from .log import LogCommand

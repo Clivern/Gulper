@@ -58,7 +58,7 @@ class Backup:
 
         Args:
             db_name (str): The database name
-            backup_time (str): A certain period for the backup
+            since (str): A certain period for the backup
 
         Returns:
             list[Dict[str, Any]]: A list of backups

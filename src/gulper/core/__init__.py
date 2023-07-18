@@ -23,3 +23,4 @@
 from .backup import Backup
 from .restore import Restore
 from .cron import Cron
+from .log import Log
