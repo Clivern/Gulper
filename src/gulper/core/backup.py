@@ -37,6 +37,14 @@ class Backup:
     """
 
     def __init__(self, config: Config, state: State, logger: Logger):
+        """
+        Class Constructor
+
+        Args:
+            config (Config): A config instance
+            state (State): A state instance
+            logger (Logger): A logger instance
+        """
         self._config = config
         self._state = state
         self._logger = logger
@@ -215,4 +223,15 @@ class Backup:
 
 
 def get_backup(config: Config, state: State, logger: Logger) -> Backup:
+    """
+    Get Backup Class Instance
+
+    Args:
+        config (Config): A config instance
+        state (State): A state instance
+        logger (Logger): A logger instance
+
+    Returns:
+        Restore: An instance of backup class
+    """
     return Backup(config, state, logger)

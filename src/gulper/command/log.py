@@ -51,4 +51,13 @@ class LogCommand:
 
 
 def get_log_command(log: Log) -> LogCommand:
+    """
+    Get an instance of log command
+
+    Args:
+        log (Log): An instance of log class
+
+    Returns:
+        LogCommand: an instance of log command
+    """
     return LogCommand(log)

@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import json
+from typing import Optional
 from gulper.module import Config
 from gulper.module import State
 from gulper.module import Logger
@@ -35,12 +36,15 @@ class Restore:
     Restore Core Functionalities
     """
 
-    def __init__(
-        self,
-        config: Config,
-        state: State,
-        logger: Logger,
-    ):
+    def __init__(self, config: Config, state: State, logger: Logger):
+        """
+        Class Constructor
+
+        Args:
+            config (Config): A config instance
+            state (State): A state instance
+            logger (Logger): A logger instance
+        """
         self._config = config
         self._state = state
         self._logger = logger
@@ -54,7 +58,7 @@ class Restore:
         self._logger.get_logger().info("Migrate the state database tables")
         self._state.migrate()
 
-    def run(self, db_name: str, backup_id: str) -> bool:
+    def run(self, db_name: Optional[str], backup_id: Optional[str]) -> bool:
         """
         Restore a database from a backup
 
@@ -65,7 +69,12 @@ class Restore:
         Returns:
             bool: whether the restore succeeded or not
         """
-        backup = self._state.get_backup_by_id(id)
+        if db_name:
+            backup = self._state.get_latest_backup(db_name)
+        elif backup_id:
+            backup = self._state.get_backup_by_id(backup_id)
+        else:
+            raise Exception("Database name or backup id must be provided")
 
         if backup is None:
             raise BackupNotFound(f"Backup with id {id} not found!")
@@ -110,4 +119,15 @@ class Restore:
 
 
 def get_restore(config: Config, state: State, logger: Logger) -> Restore:
+    """
+    Get Restore Class Instance
+
+    Args:
+        config (Config): A config instance
+        state (State): A state instance
+        logger (Logger): A logger instance
+
+    Returns:
+        Restore: An instance of restore class
+    """
     return State(config, state, logger)

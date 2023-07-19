@@ -55,7 +55,7 @@ class State:
             "CREATE TABLE IF NOT EXISTS backup (id TEXT, dbIdent TEXT, meta TEXT, lastStatus TEXT, lastBackupAt TEXT, createdAt TEXT, updatedAt TEXT)"
         )
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS log (id TEXT, record TEXT, type TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
+            "CREATE TABLE IF NOT EXISTS log (id TEXT, dbIdent TEXT, record TEXT, type TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
         )
 
         cursor.close()
@@ -100,9 +100,10 @@ class State:
         cursor = self._connection.cursor()
 
         result = cursor.execute(
-            "INSERT INTO log VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
+            "INSERT INTO log VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))",
             (
                 log.get("id", str(uuid.uuid4())),
+                log.get("dbIdent"),
                 log.get("record"),
                 log.get("type"),
                 log.get("meta", "{}"),
@@ -186,7 +187,18 @@ class State:
 
         return (
             dict(
-                zip(["id", "record", "type", "meta", "createdAt", "updatedAt"], result)
+                zip(
+                    [
+                        "id",
+                        "dbIdent",
+                        "record",
+                        "type",
+                        "meta",
+                        "createdAt",
+                        "updatedAt",
+                    ],
+                    result,
+                )
             )
             if result
             else None
@@ -248,6 +260,110 @@ class State:
                             "meta",
                             "lastStatus",
                             "lastBackupAt",
+                            "createdAt",
+                            "updatedAt",
+                        ],
+                        result,
+                    )
+                )
+                for result in results
+            ]
+            if results
+            else []
+        )
+
+    def get_latest_backup(self, db_ident: str) -> Dict[str, Any]:
+        """Retrieve the latest backup for a database with the given identifier.
+
+        Args:
+            db_ident (str): The identifier of the database.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing the latest backup details, or None if no backup is found.
+        """
+        cursor = self._connection.cursor()
+        cursor.execute(
+            "SELECT * FROM backup WHERE dbIdent = ? ORDER BY createdAt DESC LIMIT 1",
+            (db_ident,),
+        )
+        result = cursor.fetchone()
+        cursor.close()
+
+        return (
+            dict(
+                zip(
+                    [
+                        "id",
+                        "dbIdent",
+                        "record",
+                        "type",
+                        "meta",
+                        "createdAt",
+                        "updatedAt",
+                    ],
+                    result,
+                )
+            )
+            if result
+            else None
+        )
+
+    def get_logs(
+        self, dbIdent: Optional[str] = None, since: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Retrieve logs based on database identifier and time filter.
+
+        Args:
+            dbIdent (str, optional): The database identifier to filter backups. Defaults to None.
+            since (str, optional): Human-readable time filter (e.g., "3 hours ago", "1 day ago", "1 month ago"). Defaults to None.
+
+        Returns:
+            List[Dict[str, Any]]: A list of dictionaries containing log details.
+        """
+        cursor = self._connection.cursor()
+
+        # Convert human-readable time to datetime object
+        if since:
+            since_datetime = self._parse_human_readable_time(since)
+
+            if since_datetime is None:
+                raise ValueError(
+                    "Invalid time format. Use 'X hours ago', 'X days ago', 'X months ago'."
+                )
+
+            # Convert datetime to string for SQL query
+            since_datetime_str = since_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+            # Prepare SQL query with time filter
+            query = "SELECT * FROM log WHERE createdAt >= ?"
+            params = (since_datetime_str,)
+
+            if dbIdent:
+                query += " AND dbIdent = ?"
+                params += (dbIdent,)
+        else:
+            query = "SELECT * FROM log"
+            params = ()
+
+            if dbIdent:
+                query += " WHERE dbIdent = ?"
+                params = (dbIdent,)
+
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+        cursor.close()
+
+        return (
+            [
+                dict(
+                    zip(
+                        [
+                            "id",
+                            "dbIdent",
+                            "record",
+                            "type",
+                            "meta",
                             "createdAt",
                             "updatedAt",
                         ],

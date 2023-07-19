@@ -49,4 +49,13 @@ class CronCommand:
 
 
 def get_cron_command(cron: Cron) -> CronCommand:
+    """
+    Get an instance of cron command
+
+    Args:
+        cron (Cron): An instance of cron class
+
+    Returns:
+        CronCommand: an instance of cron command
+    """
     return CronCommand(cron)

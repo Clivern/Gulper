@@ -65,4 +65,13 @@ class BackupCommand:
 
 
 def get_backup_command(backup: Backup) -> BackupCommand:
+    """
+    Get an instance of backup command
+
+    Args:
+        backup (Backup): An instance of backup class
+
+    Returns:
+        BackupCommand: an instance of backup command
+    """
     return BackupCommand(backup)

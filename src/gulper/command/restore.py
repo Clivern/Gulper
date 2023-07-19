@@ -22,6 +22,8 @@
 
 from typing import Optional
 from gulper.core import Restore
+from gulper.module import success
+from gulper.module import error
 
 
 class RestoreCommand:
@@ -47,8 +49,25 @@ class RestoreCommand:
             db_name (str): The database name
             backup_id (str): The backup id
         """
-        pass
+        try:
+            result = self._restore.run(db_name, backup_id)
+        except Exception as e:
+            error(str(e))
+
+        if result:
+            success("Database restore operation succeeded!")
+        else:
+            error("Database restore operation failed!")
 
 
 def get_restore_command(restore: Restore) -> RestoreCommand:
+    """
+    Get an instance of restore command
+
+    Args:
+        restore (Restore): An instance of restore class
+
+    Returns:
+        RestoreCommand: an instance of restore command
+    """
     return RestoreCommand(restore)

@@ -30,12 +30,15 @@ class Cron:
     Cron Core Functionalities
     """
 
-    def __init__(
-        self,
-        config: Config,
-        state: State,
-        logger: Logger,
-    ):
+    def __init__(self, config: Config, state: State, logger: Logger):
+        """
+        Class Constructor
+
+        Args:
+            config (Config): A config instance
+            state (State): A state instance
+            logger (Logger): A logger instance
+        """
         self._config = config
         self._state = state
         self._logger = logger
@@ -52,6 +55,20 @@ class Cron:
     def retention(self):
         pass
 
+    def run(self):
+        pass
+
 
 def get_cron(config: Config, state: State, logger: Logger) -> Cron:
+    """
+    Get Cron Class Instance
+
+    Args:
+        config (Config): A config instance
+        state (State): A state instance
+        logger (Logger): A logger instance
+
+    Returns:
+        Restore: An instance of cron class
+    """
     return Cron(config, state, logger)
