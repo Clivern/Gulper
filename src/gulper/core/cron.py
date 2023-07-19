@@ -51,3 +51,7 @@ class Cron:
 
     def retention(self):
         pass
+
+
+def get_cron(config: Config, state: State, logger: Logger) -> Cron:
+    return Cron(config, state, logger)

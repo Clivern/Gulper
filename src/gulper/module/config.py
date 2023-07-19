@@ -58,6 +58,15 @@ class Config:
         """
         return self.config.get("temp_dir", "/tmp").lstrip("/")
 
+    def get_state_file(self) -> str:
+        """
+        Get state file path
+
+        Returns:
+            str: The state file path
+        """
+        return self.config.get("state_file", "~/gulper.db")
+
     def get_storages(self) -> Dict[str, Any]:
         """
         Get all storage configurations.

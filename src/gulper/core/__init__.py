@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .backup import Backup
-from .restore import Restore
-from .cron import Cron
-from .log import Log
+from .backup import Backup, get_backup
+from .restore import Restore, get_restore
+from .cron import Cron, get_cron
+from .log import Log, get_log

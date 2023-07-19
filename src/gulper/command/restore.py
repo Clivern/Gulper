@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import Optional
 from gulper.core import Restore
 
 
@@ -37,3 +38,17 @@ class RestoreCommand:
         """
         self._restore = restore
         self._restore.setup()
+
+    def run(self, db_name: Optional[str], backup_id: Optional[str]):
+        """
+        Restore the database
+
+        Args:
+            db_name (str): The database name
+            backup_id (str): The backup id
+        """
+        pass
+
+
+def get_restore_command(restore: Restore) -> RestoreCommand:
+    return RestoreCommand(restore)

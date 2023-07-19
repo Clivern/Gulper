@@ -22,10 +22,17 @@
 
 import click
 from gulper import __version__
-from gulper.command import BackupCommand
-from gulper.command import CronCommand
-from gulper.command import RestoreCommand
-from gulper.command import LogCommand
+from gulper.module import get_config
+from gulper.module import get_logger
+from gulper.module import get_state
+from gulper.core import get_backup
+from gulper.core import get_cron
+from gulper.core import get_log
+from gulper.core import get_restore
+from gulper.command import get_backup_command
+from gulper.command import get_cron_command
+from gulper.command import get_restore_command
+from gulper.command import get_log_command
 
 
 @click.group(
@@ -54,30 +61,73 @@ def backup(ctx):
 @click.option("--since", help="Time range for listing backups")
 @click.pass_context
 def backup_list(ctx, db, since):
-    click.echo(
-        f"Listing backups for db: {db}, since: {since}, config: {ctx.obj['config']}"
-    )
+    """
+    List backups
+
+    Args:
+        db (str): The database name
+        since (str): The time range
+    """
+    config = get_config(ctx.obj["config"])
+    logger = get_logger()
+    state = get_state(config.get_state_file())
+    backup = get_backup(config, state, logger)
+    backup_command = get_backup_command(backup)
+    return backup_command.list(db, since)
 
 
 @backup.command("run", help="Run a backup for a specified database.")
 @click.argument("db")
 @click.pass_context
 def backup_run(ctx, db):
-    click.echo(f"Running backup for db: {db}, config: {ctx.obj['config']}")
+    """
+    Run db backup
+
+    Args:
+        db (str): The database name
+    """
+    config = get_config(ctx.obj["config"])
+    logger = get_logger()
+    state = get_state(config.get_state_file())
+    backup = get_backup(config, state, logger)
+    backup_command = get_backup_command(backup)
+    return backup_command.run(db)
 
 
 @backup.command("get", help="Retrieve details of a specific backup.")
 @click.argument("backup_id")
 @click.pass_context
 def backup_get(ctx, backup_id):
-    click.echo(f"Getting backup: {backup_id}, config: {ctx.obj['config']}")
+    """
+    Get backup
+
+    Args:
+        backup_id (str): The backup ID
+    """
+    config = get_config(ctx.obj["config"])
+    logger = get_logger()
+    state = get_state(config.get_state_file())
+    backup = get_backup(config, state, logger)
+    backup_command = get_backup_command(backup)
+    return backup_command.get(backup_id)
 
 
 @backup.command("delete", help="Delete a backup by its ID.")
 @click.argument("backup_id")
 @click.pass_context
 def backup_delete(ctx, backup_id):
-    click.echo(f"Deleting backup: {backup_id}, config: {ctx.obj['config']}")
+    """
+    Delete backup
+
+    Args:
+        backup_id (str): The backup ID
+    """
+    config = get_config(ctx.obj["config"])
+    logger = get_logger()
+    state = get_state(config.get_state_file())
+    backup = get_backup(config, state, logger)
+    backup_command = get_backup_command(backup)
+    return backup_command.delete(backup_id)
 
 
 @main.group()
@@ -91,23 +141,54 @@ def restore(ctx):
 @click.argument("backup_id")
 @click.pass_context
 def restore_run(ctx, backup_id):
-    click.echo(f"Running restore for backup: {backup_id}, config: {ctx.obj['config']}")
+    """
+    Restore a database with backup id
+
+    Args:
+        backup_id (str): The backup id
+    """
+    config = get_config(ctx.obj["config"])
+    logger = get_logger()
+    state = get_state(config.get_state_file())
+    restore = get_restore(config, state, logger)
+    restore_command = get_restore_command(restore)
+    return restore_command.run(None, backup_id)
 
 
 @restore.command("db", help="Restore a specific database.")
 @click.argument("db")
 @click.pass_context
 def restore_db(ctx, db):
-    click.echo(f"Restoring database: {db}, config: {ctx.obj['config']}")
+    """
+    Restore the database with db name
+
+    Args:
+        db (str): The database name
+    """
+    config = get_config(ctx.obj["config"])
+    logger = get_logger()
+    state = get_state(config.get_state_file())
+    restore = get_restore(config, state, logger)
+    restore_command = get_restore_command(restore)
+    return restore_command.run(db, None)
 
 
 @main.command(help="Run backup schedules")
 @click.option("--daemon", is_flag=True, help="Run in daemon mode")
 @click.pass_context
 def cron(ctx, daemon):
-    click.echo(
-        f"Running cron{'in daemon mode' if daemon else ''}, config: {ctx.obj['config']}"
-    )
+    """
+    Run cron jobs
+
+    Args:
+        daemon (bool): whether to run as a daemon
+    """
+    config = get_config(ctx.obj["config"])
+    logger = get_logger()
+    state = get_state(config.get_state_file())
+    cron = get_cron(config, state, logger)
+    cron_command = get_cron_command(cron)
+    return cron_command.run(daemon)
 
 
 @main.group()
@@ -122,9 +203,19 @@ def log(ctx):
 @click.option("--since", help="Time range for listing logs")
 @click.pass_context
 def log_list(ctx, db, since):
-    click.echo(
-        f"Listing logs for db: {db}, since: {since}, config: {ctx.obj['config']}"
-    )
+    """
+    List backup and restore logs
+
+    Args:
+        db (str): The database name
+        since (str): The time range
+    """
+    config = get_config(ctx.obj["config"])
+    logger = get_logger()
+    state = get_state(config.get_state_file())
+    log = get_log(config, state, logger)
+    log_command = get_log_command(log)
+    return log_command.list(db, since)
 
 
 if __name__ == "__main__":

@@ -37,3 +37,16 @@ class CronCommand:
         """
         self._cron = cron
         self._cron.setup()
+
+    def run(self, is_daemon: bool):
+        """
+        Run cron daemon
+
+        Args:
+            is_daemon (bool): whether to run as a daemon
+        """
+        pass
+
+
+def get_cron_command(cron: Cron) -> CronCommand:
+    return CronCommand(cron)

@@ -26,7 +26,7 @@ from .dbs import get_database
 from .file_system import FileSystem, get_file_system
 from .config import Config, get_config
 from .schedule import Schedule, get_schedule
-from .storage import LocalStorage, S3Storage, Storage, get_storage
-from .state import State
+from .storage import Storage, get_storage
+from .state import State, get_state
 from .util import success
 from .util import error

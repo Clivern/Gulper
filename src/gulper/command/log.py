@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import Optional
 from gulper.core import Log
 
 
@@ -37,3 +38,17 @@ class LogCommand:
         """
         self._log = log
         self._log.setup()
+
+    def list(self, db_name: Optional[str], since: Optional[str]):
+        """
+        Output a list of logs
+
+        Args:
+            db_name (str): The database name
+            since (str): A certain period for the backup
+        """
+        print(self._log.list(db_name, since))
+
+
+def get_log_command(log: Log) -> LogCommand:
+    return LogCommand(log)

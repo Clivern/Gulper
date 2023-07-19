@@ -165,7 +165,7 @@ class Backup:
 
         return backup
 
-    def backup(self, db_name: str) -> bool:
+    def run(self, db_name: str) -> bool:
         """
         Backup the database
 
@@ -212,3 +212,7 @@ class Backup:
         )
 
         return True if len(backups) == len(storages) else False
+
+
+def get_backup(config: Config, state: State, logger: Logger) -> Backup:
+    return Backup(config, state, logger)

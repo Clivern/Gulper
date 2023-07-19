@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import Any, Dict, Optional
 from gulper.module import Config
 from gulper.module import State
 from gulper.module import Logger
@@ -48,3 +49,22 @@ class Log:
         self._state.connect()
         self._logger.get_logger().info("Migrate the state database tables")
         self._state.migrate()
+
+    def list(
+        self, db_name: Optional[str], since: Optional[str]
+    ) -> list[Dict[str, Any]]:
+        """
+        Get a list of logs
+
+        Args:
+            db_name (str): The database name
+            since (str): A certain period for the backup
+
+        Returns:
+            list[Dict[str, Any]]: A list of logs
+        """
+        return []
+
+
+def get_log(config: Config, state: State, logger: Logger) -> Log:
+    return Log(config, state, logger)

@@ -54,7 +54,7 @@ class Restore:
         self._logger.get_logger().info("Migrate the state database tables")
         self._state.migrate()
 
-    def restore(self, db_name: str, backup_id: str) -> bool:
+    def run(self, db_name: str, backup_id: str) -> bool:
         """
         Restore a database from a backup
 
@@ -107,3 +107,7 @@ class Restore:
             )
 
         return True
+
+
+def get_restore(config: Config, state: State, logger: Logger) -> Restore:
+    return State(config, state, logger)

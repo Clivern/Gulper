@@ -20,7 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Storage temp dir
 temp_dir: /tmp
+
+# SQlite state file
+state_file: ~/gulper.db
 
 storage:
   local_01:

@@ -302,7 +302,7 @@ class State:
             return None
 
 
-def get_state_client(path: str) -> State:
+def get_state(path: str) -> State:
     """Create and return a state instance.
 
     Args:

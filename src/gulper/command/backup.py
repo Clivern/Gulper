@@ -55,10 +55,14 @@ class BackupCommand:
         result = self._backup.get(id)
         print(result)
 
-    def backup(self, db_name: str):
-        result = self._backup.backup(db_name)
+    def run(self, db_name: str):
+        result = self._backup.run(db_name)
 
         if result:
             print("Backup succeeded successfully!")
         else:
             print("Backup failed!")
+
+
+def get_backup_command(backup: Backup) -> BackupCommand:
+    return BackupCommand(backup)
