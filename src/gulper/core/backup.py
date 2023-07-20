@@ -132,6 +132,8 @@ class Backup:
 
         self._db_client.delete_backup(id)
 
+        return True
+
     def get(self, id: str) -> Dict[str, Any]:
         """
         Get a backup data by ID
