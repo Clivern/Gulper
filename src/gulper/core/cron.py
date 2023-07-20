@@ -52,10 +52,7 @@ class Cron:
         self._logger.get_logger().info("Migrate the state database tables")
         self._state.migrate()
 
-    def retention(self):
-        pass
-
-    def run(self):
+    def run(self, is_daemon: bool):
         pass
 
 

@@ -30,3 +30,4 @@ from .storage import Storage, get_storage
 from .state import State, get_state
 from .util import success
 from .util import error
+from .util import table

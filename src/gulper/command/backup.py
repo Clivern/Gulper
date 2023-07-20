@@ -22,6 +22,9 @@
 
 from typing import Optional
 from gulper.core import Backup
+from gulper.module import table
+from gulper.module import success
+from gulper.module import error
 
 
 class BackupCommand:
@@ -40,28 +43,67 @@ class BackupCommand:
         self._backup.setup()
 
     def list(self, db_name: Optional[str], since: Optional[str]):
-        backups = self._backup.list(db_name, since)
-        print(backups)
+        """
+        Get a list of backups
+
+        Args:
+            db_name (Optional[str]): the database name
+            since (Optional[str]): the time range
+        """
+        try:
+            backups = self._backup.list(db_name, since)
+        except Exception as e:
+            error(str(e))
+
+        table(backups)
 
     def delete(self, id: str):
-        result = self._backup.delete(id)
+        """
+        Delete a backup by id
+
+        Args:
+            id (str): The backup id
+        """
+        try:
+            result = self._backup.delete(id)
+        except Exception as e:
+            error(str(e))
 
         if result:
-            print("Backup deleted successfully!")
+            success("Backup deleted successfully!")
         else:
-            print("Backup failed!")
+            error("Backup deletion failed!")
 
     def get(self, id: str):
-        result = self._backup.get(id)
-        print(result)
+        """
+        Get a backup
+
+        Args:
+            id (str): The backup id
+        """
+        try:
+            backup = self._backup.get(id)
+        except Exception as e:
+            error(str(e))
+
+        table([backup])
 
     def run(self, db_name: str):
-        result = self._backup.run(db_name)
+        """
+        Backup a database by name
+
+        Args:
+            db_name (str): The database name
+        """
+        try:
+            result = self._backup.run(db_name)
+        except Exception as e:
+            error(str(e))
 
         if result:
-            print("Backup succeeded successfully!")
+            success("Database backup operation succeeded!")
         else:
-            print("Backup failed!")
+            error("Database backup operation failed!")
 
 
 def get_backup_command(backup: Backup) -> BackupCommand:

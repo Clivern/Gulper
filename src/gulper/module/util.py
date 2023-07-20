@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import Dict, Any
 from rich.console import Console
 
 
@@ -31,6 +32,7 @@ def success(message: str):
         message (str): The success message to be printed.
     """
     Console().print(f"[bold green][SUCCESS][/bold green] {message}")
+    exit(0)
 
 
 def error(message: str):
@@ -41,3 +43,15 @@ def error(message: str):
         message (str): The error message to be printed.
     """
     Console().print(f"[bold red][ERROR][/bold red] {message}")
+    exit(1)
+
+
+def table(data: list[Dict[str, Any]]):
+    """
+    Print a tabular data
+
+    Args:
+        data (list[Dict[str, Any]]): The data to output
+    """
+    print(data)
+    exit(0)

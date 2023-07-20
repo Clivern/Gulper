@@ -22,6 +22,8 @@
 
 from typing import Optional
 from gulper.core import Log
+from gulper.module import table
+from gulper.module import error
 
 
 class LogCommand:
@@ -47,7 +49,12 @@ class LogCommand:
             db_name (str): The database name
             since (str): A certain period for the backup
         """
-        print(self._log.list(db_name, since))
+        try:
+            logs = self._log.list(db_name, since)
+        except Exception as e:
+            error(str(e))
+
+        table(logs)
 
 
 def get_log_command(log: Log) -> LogCommand:

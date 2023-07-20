@@ -45,7 +45,7 @@ class CronCommand:
         Args:
             is_daemon (bool): whether to run as a daemon
         """
-        pass
+        return self._cron.run(is_daemon)
 
 
 def get_cron_command(cron: Cron) -> CronCommand:
