@@ -59,14 +59,16 @@ def backup(ctx):
 @backup.command("list", help="List available backups.")
 @click.option("--db", help="Database name")
 @click.option("--since", help="Time range for listing backups")
+@click.option("--json", is_flag=True, help="Return output as JSON")
 @click.pass_context
-def backup_list(ctx, db, since):
+def backup_list(ctx, db, since, json):
     """
     List backups
 
     Args:
         db (str): The database name
         since (str): The time range
+        json (str): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
     logger = get_logger()
@@ -96,13 +98,15 @@ def backup_run(ctx, db):
 
 @backup.command("get", help="Retrieve details of a specific backup.")
 @click.argument("backup_id")
+@click.option("--json", is_flag=True, help="Return output as JSON")
 @click.pass_context
-def backup_get(ctx, backup_id):
+def backup_get(ctx, backup_id, json):
     """
     Get backup
 
     Args:
         backup_id (str): The backup ID
+        json (str): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
     logger = get_logger()
@@ -201,14 +205,16 @@ def log(ctx):
 @log.command("list", help="List available logs.")
 @click.option("--db", help="Database name to filter logs")
 @click.option("--since", help="Time range for listing logs")
+@click.option("--json", is_flag=True, help="Return output as JSON")
 @click.pass_context
-def log_list(ctx, db, since):
+def log_list(ctx, db, since, json):
     """
     List backup and restore logs
 
     Args:
         db (str): The database name
         since (str): The time range
+        json (str): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
     logger = get_logger()
