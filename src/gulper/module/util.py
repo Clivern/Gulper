@@ -47,7 +47,7 @@ def error(message: str):
     exit(1)
 
 
-def table(data: list[Dict[str, Any]]):
+def backups_table(data: list[Dict[str, Any]]):
     """
     Print a tabular data
 
@@ -78,4 +78,15 @@ def table(data: list[Dict[str, Any]]):
         )
 
     console.print(table)
+    exit(0)
+
+
+def logs_table(data: list[Dict[str, Any]]):
+    """
+    Print a tabular data
+
+    Args:
+        data (list[Dict[str, Any]]): The data to output
+    """
+    print(data)
     exit(0)

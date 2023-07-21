@@ -22,7 +22,7 @@
 
 from typing import Optional
 from gulper.core import Backup
-from gulper.module import table
+from gulper.module import backups_table
 from gulper.module import success
 from gulper.module import error
 
@@ -55,7 +55,7 @@ class BackupCommand:
         except Exception as e:
             error(str(e))
 
-        table(backups)
+        backups_table(backups)
 
     def delete(self, id: str):
         """
@@ -86,7 +86,7 @@ class BackupCommand:
         except Exception as e:
             error(str(e))
 
-        table([backup])
+        backups_table([backup])
 
     def run(self, db_name: str):
         """

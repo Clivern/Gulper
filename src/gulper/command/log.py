@@ -22,7 +22,7 @@
 
 from typing import Optional
 from gulper.core import Log
-from gulper.module import table
+from gulper.module import logs_table
 from gulper.module import error
 
 
@@ -54,7 +54,7 @@ class LogCommand:
         except Exception as e:
             error(str(e))
 
-        table(logs)
+        logs_table(logs)
 
 
 def get_log_command(log: Log) -> LogCommand:
