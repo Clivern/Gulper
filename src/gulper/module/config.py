@@ -67,6 +67,33 @@ class Config:
         """
         return self.config.get("state_file", "/tmp/gulper.db")
 
+    def get_logging_level(self) -> str:
+        """
+        Get logging level
+
+        Returns:
+            str: the logging level
+        """
+        return self.config.get("logging").get("level", "error")
+
+    def get_logging_handler(self) -> str:
+        """
+        Get logging handler
+
+        Returns:
+            str: the logging handler
+        """
+        return self.config.get("logging").get("handler", "console")
+
+    def get_logging_path(self) -> str:
+        """
+        Get logging path
+
+        Returns:
+            str: the logging path
+        """
+        return self.config.get("logging").get("path", "~")
+
     def get_storages(self) -> Dict[str, Any]:
         """
         Get all storage configurations.

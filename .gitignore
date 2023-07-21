@@ -58,3 +58,6 @@ build/
 gulper.db
 
 test.py
+
+config.local.yaml
+

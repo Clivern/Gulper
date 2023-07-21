@@ -71,7 +71,11 @@ def backup_list(ctx, db, since, json):
         json (str): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
-    logger = get_logger()
+    logger = get_logger(
+        config.get_logging_level(),
+        config.get_logging_handler(),
+        config.get_logging_path(),
+    )
     state = get_state(config.get_state_file())
     backup = get_backup(config, state, logger)
     backup_command = get_backup_command(backup)
@@ -89,7 +93,11 @@ def backup_run(ctx, db):
         db (str): The database name
     """
     config = get_config(ctx.obj["config"])
-    logger = get_logger()
+    logger = get_logger(
+        config.get_logging_level(),
+        config.get_logging_handler(),
+        config.get_logging_path(),
+    )
     state = get_state(config.get_state_file())
     backup = get_backup(config, state, logger)
     backup_command = get_backup_command(backup)
@@ -109,7 +117,11 @@ def backup_get(ctx, backup_id, json):
         json (str): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
-    logger = get_logger()
+    logger = get_logger(
+        config.get_logging_level(),
+        config.get_logging_handler(),
+        config.get_logging_path(),
+    )
     state = get_state(config.get_state_file())
     backup = get_backup(config, state, logger)
     backup_command = get_backup_command(backup)
@@ -127,7 +139,11 @@ def backup_delete(ctx, backup_id):
         backup_id (str): The backup ID
     """
     config = get_config(ctx.obj["config"])
-    logger = get_logger()
+    logger = get_logger(
+        config.get_logging_level(),
+        config.get_logging_handler(),
+        config.get_logging_path(),
+    )
     state = get_state(config.get_state_file())
     backup = get_backup(config, state, logger)
     backup_command = get_backup_command(backup)
@@ -152,7 +168,11 @@ def restore_run(ctx, backup_id):
         backup_id (str): The backup id
     """
     config = get_config(ctx.obj["config"])
-    logger = get_logger()
+    logger = get_logger(
+        config.get_logging_level(),
+        config.get_logging_handler(),
+        config.get_logging_path(),
+    )
     state = get_state(config.get_state_file())
     restore = get_restore(config, state, logger)
     restore_command = get_restore_command(restore)
@@ -170,7 +190,11 @@ def restore_db(ctx, db):
         db (str): The database name
     """
     config = get_config(ctx.obj["config"])
-    logger = get_logger()
+    logger = get_logger(
+        config.get_logging_level(),
+        config.get_logging_handler(),
+        config.get_logging_path(),
+    )
     state = get_state(config.get_state_file())
     restore = get_restore(config, state, logger)
     restore_command = get_restore_command(restore)
@@ -188,7 +212,11 @@ def cron(ctx, daemon):
         daemon (bool): whether to run as a daemon
     """
     config = get_config(ctx.obj["config"])
-    logger = get_logger()
+    logger = get_logger(
+        config.get_logging_level(),
+        config.get_logging_handler(),
+        config.get_logging_path(),
+    )
     state = get_state(config.get_state_file())
     cron = get_cron(config, state, logger)
     cron_command = get_cron_command(cron)
@@ -217,7 +245,11 @@ def log_list(ctx, db, since, json):
         json (str): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
-    logger = get_logger()
+    logger = get_logger(
+        config.get_logging_level(),
+        config.get_logging_handler(),
+        config.get_logging_path(),
+    )
     state = get_state(config.get_state_file())
     log = get_log(config, state, logger)
     log_command = get_log_command(log)

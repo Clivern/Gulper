@@ -24,7 +24,15 @@
 temp_dir: /tmp
 
 # SQlite state file
-state_file: ~/gulper.db
+state_file: /etc/gulper.db
+
+# Logging configs
+logging:
+  level: error
+  # console or file
+  handler: console
+  # path to log file if handler is a file
+  path: ~
 
 storage:
   local_01:
@@ -57,7 +65,7 @@ storage:
 
   local_02:
     type: local
-    path: /opt/mnt01/
+    path: /mnt/data01
     # Keep 20 days worth of backups
     retention: 20 days
     name: "{dbIdent}_{backupId}.tar.gz"
@@ -106,7 +114,7 @@ database:
 
   db04:
     type: sqlite
-    path: /opt/app/lynx.db
+    path: /opt/app/opswork.db
     storage:
-      - aws_s3_01
+      - local_02
     schedule: daily_01

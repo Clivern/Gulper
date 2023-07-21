@@ -20,24 +20,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
 import logging
 
 
 class Logger:
-    """Custom logger class with configurable handlers."""
+    """
+    Custom logger class with configurable handlers.
+    """
 
     loggers = {}
 
-    def __init__(self):
-        """Initialize logger with environment-based configuration."""
-        self.log_level = os.environ.get("APP_LOGGING_LEVEL", "info").upper()
-        self.log_handlers = (
-            os.environ.get("APP_LOGGING_HANDLERS", "console").lower().split(",")
-        )
+    def __init__(self, log_level: str, log_handler: str, log_file: str):
+        """
+        Initialize logger with environment-based configuration.
+
+        Args:
+            log_level (str): The log level
+            log_handler (str): The log handler
+            log_file (str): The log file
+        """
+        self.log_level = log_level.upper()
+        self.log_handler = log_handler.lower()
+        self.log_file = log_file
 
     def get_logger(self, name=__name__):
-        """Get or create a logger instance.
+        """
+        Get or create a logger instance.
 
         Args:
             name (str): Logger name (default: calling module's name).
@@ -49,17 +57,25 @@ class Logger:
             logger = logging.getLogger(name)
             logger.setLevel(self._get_log_level())
             if not logger.handlers:
-                self._setup_handlers(logger)
+                self._setup_handler(logger)
             self.loggers[name] = logger
         return self.loggers[name]
 
     def _get_log_level(self):
-        """Get logging level from environment or default to INFO."""
+        """
+        Get logging level from environment or default to INFO.
+        """
         return getattr(logging, self.log_level, logging.INFO)
 
-    def _setup_handlers(self, logger):
-        """Set up logging handlers based on configuration."""
-        if "console" in self.log_handlers:
+    def _setup_handler(self, logger):
+        """
+        Set up logging handlers based on configuration.
+
+        Args:
+            logger: The logger instance
+        """
+        # Add console handler if configured
+        if "console" == self.log_handler:
             console_handler = logging.StreamHandler()
             console_handler.setFormatter(
                 logging.Formatter(
@@ -68,11 +84,27 @@ class Logger:
             )
             logger.addHandler(console_handler)
 
+        # Add file handler if configured
+        if "file" == self.log_handler:
+            file_handler = logging.FileHandler(self.log_file)
+            file_handler.setFormatter(
+                logging.Formatter(
+                    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+                )
+            )
+            logger.addHandler(file_handler)
 
-def get_logger() -> Logger:
-    """Create and return a logger instance for the calling module.
+
+def get_logger(log_level: str, log_handler: str, log_file: str) -> Logger:
+    """
+    Create and return a logger instance for the calling module.
+
+    Args:
+        log_level (str): The log level
+        log_handler (str): The log handler
+        log_file (str): The log file
 
     Returns:
-        Logger: a Logger instance.
+        Logger: a logger instance.
     """
-    return Logger()
+    return Logger(log_level, log_handler, log_file)
