@@ -130,7 +130,7 @@ class Backup:
                     )
                 )
 
-        self._db_client.delete_backup(id)
+        self._state.delete_backup(id)
 
         return True
 
@@ -154,18 +154,18 @@ class Backup:
         paths = []
         backups_exists = True
 
-        for backup in meta["backups"]:
+        for file_backup in meta["backups"]:
             try:
-                storage = get_storage(self._config, backup.get("storage_name"))
-                file = storage.get_file(backup.get("file"))
+                storage = get_storage(self._config, file_backup.get("storage_name"))
+                file = storage.get_file(file_backup.get("file"))
                 paths.append(file.get("path"))
             except Exception as e:
                 backups_exists = False
                 self._logger.get_logger().error(
                     "Unable to locate backup {} file {} in storage {}: {}".format(
                         id,
-                        backup.get("file"),
-                        backup.get("storage_name"),
+                        file_backup.get("file"),
+                        file_backup.get("storage_name"),
                         str(e),
                     )
                 )

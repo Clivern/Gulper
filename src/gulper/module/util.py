@@ -22,6 +22,7 @@
 
 from typing import Dict, Any
 from rich.console import Console
+from rich.table import Table
 
 
 def success(message: str):
@@ -53,5 +54,28 @@ def table(data: list[Dict[str, Any]]):
     Args:
         data (list[Dict[str, Any]]): The data to output
     """
-    print(data)
+    # Create a console object
+    console = Console()
+
+    # Create a table
+    table = Table(title="Database Backups")
+
+    # Add columns
+    table.add_column("ID", style="cyan", no_wrap=True)
+    table.add_column("Database Name", style="magenta")
+    table.add_column("Backups Available", justify="center", style="green")
+    table.add_column("Created At", style="yellow")
+    table.add_column("Updated At", style="yellow")
+
+    # Add rows to the table
+    for item in data:
+        table.add_row(
+            item["id"],
+            item["dbIdent"],
+            "Yes" if item["backups_exists"] else "No",
+            item["createdAt"],
+            item["updatedAt"],
+        )
+
+    console.print(table)
     exit(0)

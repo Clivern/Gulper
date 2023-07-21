@@ -52,7 +52,7 @@ class State:
         cursor = self._connection.cursor()
 
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS backup (id TEXT, dbIdent TEXT, meta TEXT, lastStatus TEXT, lastBackupAt TEXT, createdAt TEXT, updatedAt TEXT)"
+            "CREATE TABLE IF NOT EXISTS backup (id TEXT, dbIdent TEXT, meta TEXT, status TEXT, createdAt TEXT, updatedAt TEXT)"
         )
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS log (id TEXT, dbIdent TEXT, record TEXT, type TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
@@ -73,12 +73,12 @@ class State:
         cursor = self._connection.cursor()
 
         result = cursor.execute(
-            "INSERT INTO backup VALUES (?, ?, ?, ?, datetime('now'), datetime('now'), datetime('now'))",
+            "INSERT INTO backup VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
             (
                 backup.get("id", str(uuid.uuid4())),
                 backup.get("dbIdent"),
                 backup.get("meta", "{}"),
-                backup.get("lastStatus"),
+                backup.get("status"),
             ),
         )
 
@@ -159,8 +159,7 @@ class State:
                         "id",
                         "dbIdent",
                         "meta",
-                        "lastStatus",
-                        "lastBackupAt",
+                        "status",
                         "createdAt",
                         "updatedAt",
                     ],
@@ -232,7 +231,7 @@ class State:
             since_datetime_str = since_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
             # Prepare SQL query with time filter
-            query = "SELECT * FROM backup WHERE lastBackupAt >= ?"
+            query = "SELECT * FROM backup WHERE createdAt >= ?"
             params = (since_datetime_str,)
 
             if dbIdent:
@@ -258,8 +257,7 @@ class State:
                             "id",
                             "dbIdent",
                             "meta",
-                            "lastStatus",
-                            "lastBackupAt",
+                            "status",
                             "createdAt",
                             "updatedAt",
                         ],
@@ -295,9 +293,8 @@ class State:
                     [
                         "id",
                         "dbIdent",
-                        "record",
-                        "type",
                         "meta",
+                        "status",
                         "createdAt",
                         "updatedAt",
                     ],
