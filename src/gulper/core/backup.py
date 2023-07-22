@@ -28,6 +28,7 @@ from gulper.module import State
 from gulper.module import Logger
 from gulper.module import get_storage
 from gulper.module import get_database
+from gulper.module import FileSystem
 from gulper.exception import BackupNotFound
 
 
@@ -36,7 +37,9 @@ class Backup:
     Backup Core Functionalities
     """
 
-    def __init__(self, config: Config, state: State, logger: Logger):
+    def __init__(
+        self, config: Config, state: State, logger: Logger, file_system: FileSystem
+    ):
         """
         Class Constructor
 
@@ -48,6 +51,7 @@ class Backup:
         self._config = config
         self._state = state
         self._logger = logger
+        self._file_system = file_system
 
     def setup(self):
         """
@@ -220,10 +224,14 @@ class Backup:
             }
         )
 
+        self._file_system.delete_file(file_path)
+
         return True if len(backups) == len(storages) else False
 
 
-def get_backup(config: Config, state: State, logger: Logger) -> Backup:
+def get_backup(
+    config: Config, state: State, logger: Logger, file_system: FileSystem
+) -> Backup:
     """
     Get Backup Class Instance
 
@@ -235,4 +243,4 @@ def get_backup(config: Config, state: State, logger: Logger) -> Backup:
     Returns:
         Restore: An instance of backup class
     """
-    return Backup(config, state, logger)
+    return Backup(config, state, logger, file_system)

@@ -25,6 +25,7 @@ from gulper import __version__
 from gulper.module import get_config
 from gulper.module import get_logger
 from gulper.module import get_state
+from gulper.module import get_file_system
 from gulper.core import get_backup
 from gulper.core import get_cron
 from gulper.core import get_log
@@ -77,7 +78,7 @@ def backup_list(ctx, db, since, json):
         config.get_logging_path(),
     )
     state = get_state(config.get_state_file())
-    backup = get_backup(config, state, logger)
+    backup = get_backup(config, state, logger, get_file_system())
     backup_command = get_backup_command(backup)
     return backup_command.list(db, since)
 
@@ -99,7 +100,7 @@ def backup_run(ctx, db):
         config.get_logging_path(),
     )
     state = get_state(config.get_state_file())
-    backup = get_backup(config, state, logger)
+    backup = get_backup(config, state, logger, get_file_system())
     backup_command = get_backup_command(backup)
     return backup_command.run(db)
 
@@ -123,7 +124,7 @@ def backup_get(ctx, backup_id, json):
         config.get_logging_path(),
     )
     state = get_state(config.get_state_file())
-    backup = get_backup(config, state, logger)
+    backup = get_backup(config, state, logger, get_file_system())
     backup_command = get_backup_command(backup)
     return backup_command.get(backup_id)
 
@@ -145,7 +146,7 @@ def backup_delete(ctx, backup_id):
         config.get_logging_path(),
     )
     state = get_state(config.get_state_file())
-    backup = get_backup(config, state, logger)
+    backup = get_backup(config, state, logger, get_file_system())
     backup_command = get_backup_command(backup)
     return backup_command.delete(backup_id)
 
