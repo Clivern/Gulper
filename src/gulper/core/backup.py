@@ -201,8 +201,7 @@ class Backup:
             if storage_config is None:
                 raise Exception(f"Storage {storage_name} configs are missing!")
 
-            remote_file_name = storage_config.get("name").replace("{dbIdent}", db_name)
-            remote_file_name = remote_file_name.replace("{backupId}", backup_id)
+            remote_file_name = "{backup_id}.tar.gz"
 
             try:
                 storage.upload_file(file_path, remote_file_name)

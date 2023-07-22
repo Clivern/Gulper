@@ -79,27 +79,27 @@ class Restore:
         if backup is None:
             raise BackupNotFound(f"Backup with id {id} not found!")
 
-        backup = True
+        backup_exists = True
         meta = json.loads(backup.get("meta"))
 
         file = None
-        for backup in meta["backups"]:
+        for backup_file in meta["backups"]:
             try:
-                storage = get_storage(self._config, backup.get("storage_name"))
-                storage.download_file(backup.get("file"), self._config.get_temp_dir())
-                file = backup.get("file")
-                backup = True
+                storage = get_storage(self._config, backup_file.get("storage_name"))
+                storage.download_file(backup_file.get("file"), self._config.get_temp_dir())
+                file = backup_file.get("file")
+                backup_exists = True
             except Exception as e:
-                backup = False
+                backup_exists = False
                 self._logger.get_logger().error(
                     "Unable to restore backup {} file {} in storage {}: {}".format(
                         id,
-                        backup.get("file"),
-                        backup.get("storage_name"),
+                        backup_file.get("file"),
+                        backup_file.get("storage_name"),
                         str(e),
                     )
                 )
-            if backup and file:
+            if backup_exists and file:
                 break
 
         if file is None:
@@ -130,4 +130,4 @@ def get_restore(config: Config, state: State, logger: Logger) -> Restore:
     Returns:
         Restore: An instance of restore class
     """
-    return State(config, state, logger)
+    return Restore(config, state, logger)

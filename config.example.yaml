@@ -40,7 +40,6 @@ storage:
     path: /opt/backups/
     # Keep 3 months worth of backups
     retention: 3 months # x days or x years
-    name: "{dbIdent}_{backupId}.tar.gz"
 
   aws_s3_01:
     type: s3
@@ -50,7 +49,6 @@ storage:
     region: your_region
     path: /
     retention: 1 years
-    name: "{dbIdent}_{backupId}.tar.gz"
 
   do_s3_01:
     type: s3
@@ -61,14 +59,12 @@ storage:
     region: nyc3
     path: /team_name/db_backups
     retention: 1 years
-    name: "{dbIdent}_{backupId}.tar.gz"
 
   local_02:
     type: local
     path: /mnt/data01
     # Keep 20 days worth of backups
     retention: 20 days
-    name: "{dbIdent}_{backupId}.tar.gz"
 
 schedule:
     daily_01:
