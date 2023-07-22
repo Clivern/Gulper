@@ -86,7 +86,9 @@ class Restore:
         for backup_file in meta["backups"]:
             try:
                 storage = get_storage(self._config, backup_file.get("storage_name"))
-                storage.download_file(backup_file.get("file"), self._config.get_temp_dir())
+                storage.download_file(
+                    backup_file.get("file"), self._config.get_temp_dir()
+                )
                 file = backup_file.get("file")
                 backup_exists = True
             except Exception as e:

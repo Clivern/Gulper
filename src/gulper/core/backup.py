@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import uuid
+import os
 import json
 from typing import Any, Dict, Optional
 from gulper.module import Config
@@ -188,7 +188,7 @@ class Backup:
         db = get_database(self._config, db_name)
 
         file_path = db.backup()
-        backup_id = str(uuid.uuid4())
+        backup_id = os.path.basename(file_path).replace(".tar.gz", "")
 
         backups = []
         db_config = self._config.get_database_config(db_name)
