@@ -165,7 +165,7 @@ class Backup:
                 paths.append(file.get("path"))
             except Exception as e:
                 backups_exists = False
-                self._logger.get_logger().error(
+                self._logger.get_logger().warn(
                     "Unable to locate backup {} file {} in storage {}: {}".format(
                         id,
                         file_backup.get("file"),
