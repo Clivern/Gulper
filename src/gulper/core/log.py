@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import Any, Dict, Optional
 from gulper.module import Config
 from gulper.module import State
 from gulper.module import Logger
+from typing import Any, Dict, Optional
 
 
 class Log:

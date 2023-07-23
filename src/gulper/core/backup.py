@@ -47,6 +47,7 @@ class Backup:
             config (Config): A config instance
             state (State): A state instance
             logger (Logger): A logger instance
+            file_system (FileSystem): The file system instance
         """
         self._config = config
         self._state = state
@@ -222,6 +223,6 @@ def get_backup(
         logger (Logger): A logger instance
 
     Returns:
-        Restore: An instance of backup class
+        Backup: An instance of backup class
     """
     return Backup(config, state, logger, file_system)

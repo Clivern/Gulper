@@ -115,9 +115,7 @@ class Restore:
             database.restore("{}/{}".format(self._config.get_temp_dir(), file))
         except Exception as e:
             raise OperationFailed(
-                "Failed to restore database {}: {}".format(
-                    backup.get("db"), str(e)
-                )
+                "Failed to restore database {}: {}".format(backup.get("db"), str(e))
             )
 
         return True
