@@ -24,6 +24,7 @@ from typing import Dict, Any
 from rich.table import Table
 from rich import print
 from rich.console import Console
+from rich.markdown import Markdown
 
 
 def message(message: str):
@@ -100,4 +101,24 @@ def logs_table(data: list[Dict[str, Any]]):
         data (list[Dict[str, Any]]): The data to output
     """
     print(data)
+    exit(0)
+
+
+def backup_info(backup):
+    backup["status"] = backup["status"].title()
+
+    markdown = f"""- **Backup ID**: {backup.get("id")}
+- **Database**:  {backup.get("db")}
+- **Status**:  {backup.get("status")}
+- **Backups Exists**: {backup.get("backups_exists")}
+- **Created At**:  {backup.get("createdAt")}
+- **Updated At**:  {backup.get("updatedAt")}
+"""
+
+    for file in backup["meta"]["backups"]:
+        markdown += f"- **{file.get('storage_name')}**: {file.get('file')}\n"
+
+    console = Console()
+    md = Markdown(markdown)
+    console.print(md)
     exit(0)

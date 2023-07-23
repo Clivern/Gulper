@@ -86,11 +86,9 @@ class Restore:
         for backup_file in meta["backups"]:
             try:
                 storage = get_storage(self._config, backup_file.get("storage_name"))
-
                 local_file = "{}/{}.tar.gz".format(
                     self._config.get_temp_dir(), backup.get("id")
                 )
-
                 storage.download_file(backup_file.get("file"), local_file)
                 file = backup_file.get("file")
                 backup_exists = True

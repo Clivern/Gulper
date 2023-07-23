@@ -33,3 +33,4 @@ from .util import error
 from .util import message
 from .util import backups_table
 from .util import logs_table
+from .util import backup_info

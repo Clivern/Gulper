@@ -25,6 +25,7 @@ from gulper.core import Backup
 from gulper.module import backups_table
 from gulper.module import success
 from gulper.module import error
+from gulper.module import backup_info
 
 
 class BackupCommand:
@@ -86,7 +87,7 @@ class BackupCommand:
         except Exception as e:
             error(str(e))
 
-        backups_table([backup])
+        backup_info(backup)
 
     def run(self, db_name: str):
         """
