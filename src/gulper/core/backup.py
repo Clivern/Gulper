@@ -199,7 +199,7 @@ class Backup:
         self._state.insert_backup(
             {
                 "id": backup_id,
-                "dbIdent": db_name,
+                "db": db_name,
                 "meta": json.dumps({"backups": backups}),
                 "status": "success" if len(backups) == len(storages) else "failure",
             }

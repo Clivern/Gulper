@@ -52,10 +52,10 @@ class State:
         cursor = self._connection.cursor()
 
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS backup (id TEXT, dbIdent TEXT, meta TEXT, status TEXT, createdAt TEXT, updatedAt TEXT)"
+            "CREATE TABLE IF NOT EXISTS backup (id TEXT, db TEXT, meta TEXT, status TEXT, createdAt TEXT, updatedAt TEXT)"
         )
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS log (id TEXT, dbIdent TEXT, record TEXT, type TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
+            "CREATE TABLE IF NOT EXISTS log (id TEXT, db TEXT, record TEXT, type TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
         )
 
         cursor.close()
@@ -76,7 +76,7 @@ class State:
             "INSERT INTO backup VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))",
             (
                 backup.get("id", str(uuid.uuid4())),
-                backup.get("dbIdent"),
+                backup.get("db"),
                 backup.get("meta", "{}"),
                 backup.get("status"),
             ),
@@ -103,7 +103,7 @@ class State:
             "INSERT INTO log VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))",
             (
                 log.get("id", str(uuid.uuid4())),
-                log.get("dbIdent"),
+                log.get("db"),
                 log.get("record"),
                 log.get("type"),
                 log.get("meta", "{}"),
@@ -157,7 +157,7 @@ class State:
                 zip(
                     [
                         "id",
-                        "dbIdent",
+                        "db",
                         "meta",
                         "status",
                         "createdAt",
@@ -189,7 +189,7 @@ class State:
                 zip(
                     [
                         "id",
-                        "dbIdent",
+                        "db",
                         "record",
                         "type",
                         "meta",
@@ -204,13 +204,13 @@ class State:
         )
 
     def get_backups(
-        self, dbIdent: Optional[str] = None, since: Optional[str] = None
+        self, db: Optional[str] = None, since: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """
         Retrieve backups based on database identifier and time filter.
 
         Args:
-            dbIdent (str, optional): The database identifier to filter backups. Defaults to None.
+            db (str, optional): The database identifier to filter backups. Defaults to None.
             since (str, optional): Human-readable time filter (e.g., "3 hours ago", "1 day ago", "1 month ago"). Defaults to None.
 
         Returns:
@@ -234,16 +234,16 @@ class State:
             query = "SELECT * FROM backup WHERE createdAt >= ?"
             params = (since_datetime_str,)
 
-            if dbIdent:
-                query += " AND dbIdent = ?"
-                params += (dbIdent,)
+            if db:
+                query += " AND db = ?"
+                params += (db,)
         else:
             query = "SELECT * FROM backup"
             params = ()
 
-            if dbIdent:
-                query += " WHERE dbIdent = ?"
-                params = (dbIdent,)
+            if db:
+                query += " WHERE db = ?"
+                params = (db,)
 
         query += " ORDER BY createdAt DESC"
         cursor.execute(query, params)
@@ -256,7 +256,7 @@ class State:
                     zip(
                         [
                             "id",
-                            "dbIdent",
+                            "db",
                             "meta",
                             "status",
                             "createdAt",
@@ -282,7 +282,7 @@ class State:
         """
         cursor = self._connection.cursor()
         cursor.execute(
-            "SELECT * FROM backup WHERE dbIdent = ? ORDER BY createdAt DESC LIMIT 1",
+            "SELECT * FROM backup WHERE db = ? ORDER BY createdAt DESC LIMIT 1",
             (db_ident,),
         )
         result = cursor.fetchone()
@@ -293,7 +293,7 @@ class State:
                 zip(
                     [
                         "id",
-                        "dbIdent",
+                        "db",
                         "meta",
                         "status",
                         "createdAt",
@@ -307,13 +307,13 @@ class State:
         )
 
     def get_logs(
-        self, dbIdent: Optional[str] = None, since: Optional[str] = None
+        self, db: Optional[str] = None, since: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """
         Retrieve logs based on database identifier and time filter.
 
         Args:
-            dbIdent (str, optional): The database identifier to filter backups. Defaults to None.
+            db (str, optional): The database identifier to filter backups. Defaults to None.
             since (str, optional): Human-readable time filter (e.g., "3 hours ago", "1 day ago", "1 month ago"). Defaults to None.
 
         Returns:
@@ -337,16 +337,16 @@ class State:
             query = "SELECT * FROM log WHERE createdAt >= ?"
             params = (since_datetime_str,)
 
-            if dbIdent:
-                query += " AND dbIdent = ?"
-                params += (dbIdent,)
+            if db:
+                query += " AND db = ?"
+                params += (db,)
         else:
             query = "SELECT * FROM log"
             params = ()
 
-            if dbIdent:
-                query += " WHERE dbIdent = ?"
-                params = (dbIdent,)
+            if db:
+                query += " WHERE db = ?"
+                params = (db,)
 
         cursor.execute(query, params)
         results = cursor.fetchall()
@@ -358,7 +358,7 @@ class State:
                     zip(
                         [
                             "id",
-                            "dbIdent",
+                            "db",
                             "record",
                             "type",
                             "meta",

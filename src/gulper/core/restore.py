@@ -111,12 +111,12 @@ class Restore:
             raise BackupNotFound(f"Backup with id {id} not found!")
 
         try:
-            database = get_database(self._config, backup.get("dbIdent"))
+            database = get_database(self._config, backup.get("db"))
             database.restore("{}/{}".format(self._config.get_temp_dir(), file))
         except Exception as e:
             raise OperationFailed(
                 "Failed to restore database {}: {}".format(
-                    backup.get("dbIdent"), str(e)
+                    backup.get("db"), str(e)
                 )
             )
 

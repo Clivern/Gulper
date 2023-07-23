@@ -27,6 +27,6 @@ from gulper.module import get_logger, Logger
 
 def test_logger():
     """Logger Tests"""
-    result = get_logger()
+    result = get_logger("info", "console", "~")
 
     assert isinstance(result, Logger) == True

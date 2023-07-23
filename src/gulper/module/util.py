@@ -82,7 +82,7 @@ def backups_table(data: list[Dict[str, Any]]):
     for item in data:
         table.add_row(
             item["id"],
-            item["dbIdent"],
+            item["db"],
             item["status"].title(),
             item["createdAt"],
             item["updatedAt"],

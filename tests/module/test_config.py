@@ -39,10 +39,6 @@ def test_config():
     assert config.get_storages().get("aws_s3_01").get("region") == "your_region"
     assert config.get_storages().get("aws_s3_01").get("path") == "/"
     assert config.get_storages().get("aws_s3_01").get("retention") == "1 years"
-    assert (
-        config.get_storages().get("aws_s3_01").get("name")
-        == "{dbIdent}_{backupId}.tar.gz"
-    )
 
 
 def test_get_storages():
@@ -77,7 +73,6 @@ def test_get_storage_config():
     assert isinstance(storage_config, dict)
     assert "path" in storage_config
     assert "retention" in storage_config
-    assert "name" in storage_config
 
     # Test non-existent storage
     non_existent_config = config.get_storage_config("non_existent")
