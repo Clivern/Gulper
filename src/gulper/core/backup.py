@@ -79,26 +79,7 @@ class Backup:
 
         i = 0
         for backup in backups:
-            paths = []
-            backups_exists = True
-            meta = json.loads(backup.get("meta"))
-            for backup in meta["backups"]:
-                try:
-                    storage = get_storage(self._config, backup.get("storage_name"))
-                    file = storage.get_file(backup.get("file"))
-                    paths.append(file.get("path"))
-                except Exception as e:
-                    backups_exists = False
-                    self._logger.get_logger().error(
-                        "Unable to locate backup {} file {} in storage {}: {}".format(
-                            id,
-                            backup.get("file"),
-                            backup.get("storage_name"),
-                            str(e),
-                        )
-                    )
-            backups[i]["paths"] = paths
-            backups[i]["backups_exists"] = backups_exists
+            backups[i]["meta"] = json.loads(backup.get("meta"))
             i += 1
 
         return backups
@@ -153,12 +134,12 @@ class Backup:
         if backup is None:
             raise BackupNotFound(f"Backup with id {id} not found!")
 
-        meta = json.loads(backup.get("meta"))
+        backup["meta"] = json.loads(backup.get("meta"))
 
         paths = []
         backups_exists = True
 
-        for file_backup in meta["backups"]:
+        for file_backup in backup["meta"]["backups"]:
             try:
                 storage = get_storage(self._config, file_backup.get("storage_name"))
                 file = storage.get_file(file_backup.get("file"))
@@ -220,7 +201,7 @@ class Backup:
                 "id": backup_id,
                 "dbIdent": db_name,
                 "meta": json.dumps({"backups": backups}),
-                "lastStatus": "success" if len(backups) == len(storages) else "failure",
+                "status": "success" if len(backups) == len(storages) else "failure",
             }
         )
 

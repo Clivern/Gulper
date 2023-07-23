@@ -21,8 +21,18 @@
 # SOFTWARE.
 
 from typing import Dict, Any
-from rich.console import Console
 from rich.table import Table
+from rich import print
+
+
+def message(message: str):
+    """
+    Print a message
+
+    Args:
+        message (str): The message to show
+    """
+    print(f"[bold green]{message}[/bold green]")
 
 
 def success(message: str):
@@ -32,7 +42,7 @@ def success(message: str):
     Args:
         message (str): The success message to be printed.
     """
-    Console().print(f"[bold green][SUCCESS][/bold green] {message}")
+    print(f"[bold green][SUCCESS][/bold green] {message}")
     exit(0)
 
 
@@ -43,7 +53,7 @@ def error(message: str):
     Args:
         message (str): The error message to be printed.
     """
-    Console().print(f"[bold red][ERROR][/bold red] {message}")
+    print(f"[bold red][ERROR][/bold red] {message}")
     exit(1)
 
 
@@ -63,7 +73,7 @@ def backups_table(data: list[Dict[str, Any]]):
     # Add columns
     table.add_column("ID", style="cyan", no_wrap=True)
     table.add_column("Database Name", style="magenta")
-    table.add_column("Backups Available", justify="center", style="green")
+    table.add_column("Status", justify="center", style="green")
     table.add_column("Created At (UTC)", style="yellow")
     table.add_column("Updated At (UTC)", style="yellow")
 
@@ -72,7 +82,7 @@ def backups_table(data: list[Dict[str, Any]]):
         table.add_row(
             item["id"],
             item["dbIdent"],
-            "Yes" if item["backups_exists"] else "No",
+            item["status"].title(),
             item["createdAt"],
             item["updatedAt"],
         )

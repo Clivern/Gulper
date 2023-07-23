@@ -34,6 +34,7 @@ from gulper.command import get_backup_command
 from gulper.command import get_cron_command
 from gulper.command import get_restore_command
 from gulper.command import get_log_command
+from gulper.module import get_schedule
 
 
 @click.group(
@@ -220,7 +221,7 @@ def cron(ctx, daemon):
     )
     state = get_state(config.get_state_file())
     backup = get_backup(config, state, logger, get_file_system())
-    cron = get_cron(config, state, logger, backup)
+    cron = get_cron(config, state, logger, backup, get_schedule())
     cron_command = get_cron_command(cron)
     return cron_command.run(daemon)
 
