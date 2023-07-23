@@ -23,6 +23,7 @@
 from typing import Dict, Any
 from rich.table import Table
 from rich import print
+from rich.console import Console
 
 
 def message(message: str):
