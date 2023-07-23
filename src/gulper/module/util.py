@@ -64,8 +64,8 @@ def backups_table(data: list[Dict[str, Any]]):
     table.add_column("ID", style="cyan", no_wrap=True)
     table.add_column("Database Name", style="magenta")
     table.add_column("Backups Available", justify="center", style="green")
-    table.add_column("Created At", style="yellow")
-    table.add_column("Updated At", style="yellow")
+    table.add_column("Created At (UTC)", style="yellow")
+    table.add_column("Updated At (UTC)", style="yellow")
 
     # Add rows to the table
     for item in data:

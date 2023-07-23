@@ -23,6 +23,7 @@
 from gulper.module import Config
 from gulper.module import State
 from gulper.module import Logger
+from gulper.core import Backup
 
 
 class Cron:
@@ -30,7 +31,7 @@ class Cron:
     Cron Core Functionalities
     """
 
-    def __init__(self, config: Config, state: State, logger: Logger):
+    def __init__(self, config: Config, state: State, logger: Logger, backup: Backup):
         """
         Class Constructor
 
@@ -42,6 +43,7 @@ class Cron:
         self._config = config
         self._state = state
         self._logger = logger
+        self._backup = backup
 
     def setup(self):
         """
@@ -53,10 +55,12 @@ class Cron:
         self._state.migrate()
 
     def run(self, is_daemon: bool):
-        pass
+        while True:
+            if not is_daemon:
+                break
 
 
-def get_cron(config: Config, state: State, logger: Logger) -> Cron:
+def get_cron(config: Config, state: State, logger: Logger, backup: Backup) -> Cron:
     """
     Get Cron Class Instance
 
@@ -68,4 +72,4 @@ def get_cron(config: Config, state: State, logger: Logger) -> Cron:
     Returns:
         Restore: An instance of cron class
     """
-    return Cron(config, state, logger)
+    return Cron(config, state, logger, backup)

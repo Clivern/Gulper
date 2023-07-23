@@ -219,7 +219,8 @@ def cron(ctx, daemon):
         config.get_logging_path(),
     )
     state = get_state(config.get_state_file())
-    cron = get_cron(config, state, logger)
+    backup = get_backup(config, state, logger, get_file_system())
+    cron = get_cron(config, state, logger, backup)
     cron_command = get_cron_command(cron)
     return cron_command.run(daemon)
 
