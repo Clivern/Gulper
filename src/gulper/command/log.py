@@ -24,6 +24,7 @@ from typing import Optional
 from gulper.core import Log
 from gulper.module import logs_table
 from gulper.module import error
+from gulper.module import Output
 
 
 class LogCommand:
@@ -31,40 +32,44 @@ class LogCommand:
     Log Command
     """
 
-    def __init__(self, log: Log):
+    def __init__(self, log: Log, output: Output):
         """
         Class Constructor
 
         Args:
             log (Log): The log class instance
+            output (Output): output class instance
         """
         self._log = log
+        self._output = output
         self._log.setup()
 
-    def list(self, db_name: Optional[str], since: Optional[str]):
+    def list(self, db_name: Optional[str], since: Optional[str], as_json: bool):
         """
         Output a list of logs
 
         Args:
             db_name (str): The database name
             since (str): A certain period for the backup
+            as_json (bool): whether to output as JSON
         """
         try:
             logs = self._log.list(db_name, since)
         except Exception as e:
-            error(str(e))
+            self._output.error_message(str(e), as_json)
 
-        logs_table(logs)
+        self._output.show_logs(logs, as_json)
 
 
-def get_log_command(log: Log) -> LogCommand:
+def get_log_command(log: Log, output: Output) -> LogCommand:
     """
     Get an instance of log command
 
     Args:
         log (Log): An instance of log class
+        output (Output): output class instance
 
     Returns:
         LogCommand: an instance of log command
     """
-    return LogCommand(log)
+    return LogCommand(log, output)

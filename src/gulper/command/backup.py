@@ -26,6 +26,7 @@ from gulper.module import backups_table
 from gulper.module import success
 from gulper.module import error
 from gulper.module import backup_info
+from gulper.module import Output
 
 
 class BackupCommand:
@@ -33,88 +34,97 @@ class BackupCommand:
     Backup Command
     """
 
-    def __init__(self, backup: Backup):
+    def __init__(self, backup: Backup, output: Output):
         """
         Class Constructor
 
         Args:
             backup (Backup): backup core instance
+            output (Output): output class instance
         """
         self._backup = backup
+        self._output = output
         self._backup.setup()
 
-    def list(self, db_name: Optional[str], since: Optional[str]):
+    def list(self, db_name: Optional[str], since: Optional[str], as_json: bool):
         """
         Get a list of backups
 
         Args:
             db_name (Optional[str]): the database name
             since (Optional[str]): the time range
+            as_json (bool): whether to output as JSON
         """
         try:
             backups = self._backup.list(db_name, since)
         except Exception as e:
-            error(str(e))
+            self._output.error_message(str(e), as_json)
 
-        backups_table(backups)
+        self._output.show_backups(backups, as_json)
 
-    def delete(self, id: str):
+    def delete(self, id: str, as_json: bool):
         """
         Delete a backup by id
 
         Args:
             id (str): The backup id
+            as_json (bool): whether to output as JSON
         """
         try:
             result = self._backup.delete(id)
         except Exception as e:
-            error(str(e))
+            self._output.error_message(str(e), as_json)
 
         if result:
-            success("Backup deleted successfully!")
+            self._output.success_message("Backup deleted successfully!", as_json)
         else:
-            error("Backup deletion failed!")
+            self._output.error_message("Backup deletion failed!", as_json)
 
-    def get(self, id: str):
+    def get(self, id: str, as_json: bool):
         """
         Get a backup
 
         Args:
             id (str): The backup id
+            as_json (bool): whether to output as JSON
         """
         try:
             backup = self._backup.get(id)
         except Exception as e:
-            error(str(e))
+            self._output.error_message(str(e), as_json)
 
-        backup_info(backup)
+        self._output.show_backup(backup, as_json)
 
-    def run(self, db_name: str):
+    def run(self, db_name: str, as_json: bool):
         """
         Backup a database by name
 
         Args:
             db_name (str): The database name
+            as_json (bool): whether to output as JSON
         """
         try:
             result = self._backup.run(db_name)
         except Exception as e:
-            error(str(e))
+            self._output.error_message(str(e), as_json)
 
         if result:
-            success("Database backup operation succeeded!")
+            self._output.success_message(
+                "Database backup operation succeeded!", as_json
+            )
         else:
-            error("Database backup operation failed!")
+            self._output.error_message("Database backup operation failed!", as_json)
 
 
-def get_backup_command(backup: Backup) -> BackupCommand:
+def get_backup_command(backup: Backup, output: Output) -> BackupCommand:
     """
     Get an instance of backup command
 
     Args:
         backup (Backup): An instance of backup class
+        output (Output): output class instance
 
     Returns:
         BackupCommand: an instance of backup command
     """
-    return BackupCommand(backup)
+    return BackupCommand(backup, output)

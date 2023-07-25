@@ -28,7 +28,6 @@ from gulper.module import Logger
 from gulper.core import Backup
 from gulper.module import Schedule
 from datetime import datetime
-from gulper.module import message
 
 
 class Cron:
@@ -77,7 +76,7 @@ class Cron:
             is_daemon (bool): whether to run it as a daemon
         """
         if is_daemon:
-            message("Cron daemon started..")
+            print("Cron daemon started..")
 
         while True:
             dbs = self._config.get_databases()

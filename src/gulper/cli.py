@@ -35,6 +35,7 @@ from gulper.command import get_cron_command
 from gulper.command import get_restore_command
 from gulper.command import get_log_command
 from gulper.module import get_schedule
+from gulper.module import get_output
 
 
 @click.group(
@@ -70,7 +71,7 @@ def backup_list(ctx, db, since, json):
     Args:
         db (str): The database name
         since (str): The time range
-        json (str): whether to output json or not
+        json (bool): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
     logger = get_logger(
@@ -80,19 +81,21 @@ def backup_list(ctx, db, since, json):
     )
     state = get_state(config.get_state_file())
     backup = get_backup(config, state, logger, get_file_system())
-    backup_command = get_backup_command(backup)
-    return backup_command.list(db, since)
+    backup_command = get_backup_command(backup, get_output())
+    return backup_command.list(db, since, json)
 
 
 @backup.command("run", help="Run a backup for a specified database.")
 @click.argument("db")
+@click.option("--json", is_flag=True, help="Return output as JSON")
 @click.pass_context
-def backup_run(ctx, db):
+def backup_run(ctx, db, json):
     """
     Run db backup
 
     Args:
         db (str): The database name
+        json (bool): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
     logger = get_logger(
@@ -102,8 +105,8 @@ def backup_run(ctx, db):
     )
     state = get_state(config.get_state_file())
     backup = get_backup(config, state, logger, get_file_system())
-    backup_command = get_backup_command(backup)
-    return backup_command.run(db)
+    backup_command = get_backup_command(backup, get_output())
+    return backup_command.run(db, json)
 
 
 @backup.command("get", help="Retrieve details of a specific backup.")
@@ -116,7 +119,7 @@ def backup_get(ctx, backup_id, json):
 
     Args:
         backup_id (str): The backup ID
-        json (str): whether to output json or not
+        json (bool): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
     logger = get_logger(
@@ -126,19 +129,21 @@ def backup_get(ctx, backup_id, json):
     )
     state = get_state(config.get_state_file())
     backup = get_backup(config, state, logger, get_file_system())
-    backup_command = get_backup_command(backup)
-    return backup_command.get(backup_id)
+    backup_command = get_backup_command(backup, get_output())
+    return backup_command.get(backup_id, json)
 
 
 @backup.command("delete", help="Delete a backup by its ID.")
 @click.argument("backup_id")
+@click.option("--json", is_flag=True, help="Return output as JSON")
 @click.pass_context
-def backup_delete(ctx, backup_id):
+def backup_delete(ctx, backup_id, json):
     """
     Delete backup
 
     Args:
         backup_id (str): The backup ID
+        json (bool): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
     logger = get_logger(
@@ -148,8 +153,8 @@ def backup_delete(ctx, backup_id):
     )
     state = get_state(config.get_state_file())
     backup = get_backup(config, state, logger, get_file_system())
-    backup_command = get_backup_command(backup)
-    return backup_command.delete(backup_id)
+    backup_command = get_backup_command(backup, get_output())
+    return backup_command.delete(backup_id, json)
 
 
 @main.group()
@@ -161,13 +166,15 @@ def restore(ctx):
 
 @restore.command("run", help="Restore a database from a specific backup.")
 @click.argument("backup_id")
+@click.option("--json", is_flag=True, help="Return output as JSON")
 @click.pass_context
-def restore_run(ctx, backup_id):
+def restore_run(ctx, backup_id, json):
     """
     Restore a database with backup id
 
     Args:
         backup_id (str): The backup id
+        json (bool): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
     logger = get_logger(
@@ -177,19 +184,21 @@ def restore_run(ctx, backup_id):
     )
     state = get_state(config.get_state_file())
     restore = get_restore(config, state, logger)
-    restore_command = get_restore_command(restore)
-    return restore_command.run(None, backup_id)
+    restore_command = get_restore_command(restore, get_output())
+    return restore_command.run(None, backup_id, json)
 
 
 @restore.command("db", help="Restore a specific database.")
 @click.argument("db")
+@click.option("--json", is_flag=True, help="Return output as JSON")
 @click.pass_context
-def restore_db(ctx, db):
+def restore_db(ctx, db, json):
     """
     Restore the database with db name
 
     Args:
         db (str): The database name
+        json (bool): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
     logger = get_logger(
@@ -199,8 +208,8 @@ def restore_db(ctx, db):
     )
     state = get_state(config.get_state_file())
     restore = get_restore(config, state, logger)
-    restore_command = get_restore_command(restore)
-    return restore_command.run(db, None)
+    restore_command = get_restore_command(restore, get_output())
+    return restore_command.run(db, None, json)
 
 
 @main.command(help="Run backup schedules")
@@ -245,7 +254,7 @@ def log_list(ctx, db, since, json):
     Args:
         db (str): The database name
         since (str): The time range
-        json (str): whether to output json or not
+        json (bool): whether to output json or not
     """
     config = get_config(ctx.obj["config"])
     logger = get_logger(
@@ -255,8 +264,8 @@ def log_list(ctx, db, since, json):
     )
     state = get_state(config.get_state_file())
     log = get_log(config, state, logger)
-    log_command = get_log_command(log)
-    return log_command.list(db, since)
+    log_command = get_log_command(log, get_output())
+    return log_command.list(db, since, json)
 
 
 if __name__ == "__main__":

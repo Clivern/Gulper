@@ -24,6 +24,7 @@ from typing import Optional
 from gulper.core import Restore
 from gulper.module import success
 from gulper.module import error
+from gulper.module import Output
 
 
 class RestoreCommand:
@@ -31,43 +32,49 @@ class RestoreCommand:
     Restore Command
     """
 
-    def __init__(self, restore: Restore):
+    def __init__(self, restore: Restore, output: Output):
         """
         Class Constructor
 
         Args:
             restore (Restore): The restore class instance
+            output (Output): output class instance
         """
         self._restore = restore
+        self._output = output
         self._restore.setup()
 
-    def run(self, db_name: Optional[str], backup_id: Optional[str]):
+    def run(self, db_name: Optional[str], backup_id: Optional[str], as_json: bool):
         """
         Restore the database
 
         Args:
             db_name (str): The database name
             backup_id (str): The backup id
+            as_json (bool): Whether to return output as JSON
         """
         try:
             result = self._restore.run(db_name, backup_id)
         except Exception as e:
-            error(str(e))
+            self._output.error_message(str(e), as_json)
 
         if result:
-            success("Database restore operation succeeded!")
+            self._output.success_message(
+                "Database restore operation succeeded!", as_json
+            )
         else:
-            error("Database restore operation failed!")
+            self._output.error_message("Database restore operation failed!", as_json)
 
 
-def get_restore_command(restore: Restore) -> RestoreCommand:
+def get_restore_command(restore: Restore, output: Output) -> RestoreCommand:
     """
     Get an instance of restore command
 
     Args:
         restore (Restore): An instance of restore class
+        output (Output): output class instance
 
     Returns:
         RestoreCommand: an instance of restore command
     """
-    return RestoreCommand(restore)
+    return RestoreCommand(restore, output)
