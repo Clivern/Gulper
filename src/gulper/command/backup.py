@@ -22,10 +22,6 @@
 
 from typing import Optional
 from gulper.core import Backup
-from gulper.module import backups_table
-from gulper.module import success
-from gulper.module import error
-from gulper.module import backup_info
 from gulper.module import Output
 
 

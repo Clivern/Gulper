@@ -22,8 +22,6 @@
 
 from typing import Optional
 from gulper.core import Restore
-from gulper.module import success
-from gulper.module import error
 from gulper.module import Output
 
 

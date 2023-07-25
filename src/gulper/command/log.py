@@ -22,8 +22,6 @@
 
 from typing import Optional
 from gulper.core import Log
-from gulper.module import logs_table
-from gulper.module import error
 from gulper.module import Output
 
 
