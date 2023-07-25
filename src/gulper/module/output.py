@@ -96,7 +96,7 @@ class Output:
                     {
                         "id": item["id"],
                         "db": item["db"],
-                        "status": item["status"].title(),
+                        "status": item["status"],
                         "createdAt": item["createdAt"],
                         "updatedAt": item["updatedAt"],
                     }
@@ -135,8 +135,6 @@ class Output:
             data (Dict[str, Any]]: A backup data
             as_json (bool): Whether to output as json
         """
-        data["status"] = data["status"].title()
-
         if as_json:
             print(
                 {
@@ -151,6 +149,7 @@ class Output:
             )
             return
 
+        data["status"] = data.get("status").title()
         markdown = f"""- **Backup ID**: {data.get("id")}
 - **Database**:  {data.get("db")}
 - **Status**:  {data.get("status")}
