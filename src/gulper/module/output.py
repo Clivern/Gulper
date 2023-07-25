@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import json
 from typing import Dict, Any
 from rich.table import Table
 from rich import print as fprint
@@ -100,7 +101,7 @@ class Output:
                         "updatedAt": item["updatedAt"],
                     }
                 )
-            print(items)
+            print(json.dumps(items))
             return
 
         # Create a table
