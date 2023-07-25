@@ -48,7 +48,7 @@ class Output:
             as_json (bool): Whether to output as json
         """
         if as_json:
-            print({"message": message})
+            print(json.dumps({"message": message}))
         else:
             fprint(f"[bold green]{message}[/bold green]")
         exit(0)
@@ -62,7 +62,7 @@ class Output:
             is_json (bool): Whether to output as json
         """
         if as_json:
-            print({"message": message})
+            print(json.dumps({"message": message}))
         else:
             fprint(f"[bold green][SUCCESS][/bold green] {message}")
         exit(0)
@@ -76,7 +76,7 @@ class Output:
             as_json (bool): Whether to output as json
         """
         if as_json:
-            print({"message": message})
+            print(json.dumps({"message": message}))
         else:
             fprint(f"[bold red][ERROR][/bold red] {message}")
         exit(1)
@@ -137,15 +137,17 @@ class Output:
         """
         if as_json:
             print(
-                {
-                    "id": data.get("id"),
-                    "db": data.get("db"),
-                    "status": data.get("status"),
-                    "backups": data.get("meta").get("backups"),
-                    "backupExists": data.get("backups_exists"),
-                    "createdAt": data.get("createdAt"),
-                    "updatedAt": data.get("updatedAt"),
-                }
+                json.dumps(
+                    {
+                        "id": data.get("id"),
+                        "db": data.get("db"),
+                        "status": data.get("status"),
+                        "backups": data.get("meta").get("backups"),
+                        "backupExists": data.get("backups_exists"),
+                        "createdAt": data.get("createdAt"),
+                        "updatedAt": data.get("updatedAt"),
+                    }
+                )
             )
             return
 
