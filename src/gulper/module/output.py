@@ -39,7 +39,7 @@ class Output:
         """
         self._console = Console()
 
-    def regular_message(message: str, as_json: bool):
+    def regular_message(self, message: str, as_json: bool):
         """
         Print a regular message
 
@@ -53,7 +53,7 @@ class Output:
             fprint(f"[bold green]{message}[/bold green]")
         exit(0)
 
-    def success_message(message: str, as_json: bool):
+    def success_message(self, message: str, as_json: bool):
         """
         Print a success message
 
@@ -67,7 +67,7 @@ class Output:
             fprint(f"[bold green][SUCCESS][/bold green] {message}")
         exit(0)
 
-    def error_message(message: str, as_json: bool):
+    def error_message(self, message: str, as_json: bool):
         """
         Print an error message
 
