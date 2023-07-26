@@ -175,7 +175,45 @@ class Output:
             data (list[Dict[str, Any]]): A list of logs
             as_json (bool): Whether to output as json
         """
-        print(data)
+        if as_json:
+            items = []
+            for item in data:
+                items.append(
+                    {
+                        "id": item.get("id"),
+                        "db": item.get("db"),
+                        "type": item.get("type"),
+                        "record": item.get("record"),
+                        "createdAt": item.get("createdAt"),
+                        "updatedAt": item.get("updatedAt"),
+                    }
+                )
+            print(json.dumps(items))
+            return
+
+        # Create a table
+        table = Table(title="Log Records")
+
+        # Add columns
+        table.add_column("ID", style="cyan", no_wrap=True)
+        table.add_column("Database Name", style="magenta")
+        table.add_column("Type", style="red")
+        table.add_column("Record", style="green")
+        table.add_column("Created At (UTC)", style="yellow")
+        table.add_column("Updated At (UTC)", style="yellow")
+
+        # Add rows to the table
+        for item in data:
+            table.add_row(
+                item.get("id"),
+                item.get("db"),
+                item.get("type"),
+                item.get("record"),
+                item.get("createdAt"),
+                item.get("updatedAt"),
+            )
+
+        self._console.print(table)
         exit(0)
 
 
