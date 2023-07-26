@@ -117,7 +117,13 @@ class Backup:
                 )
 
         self._state.delete_backup(id)
-
+        self._state.insert_log(
+            {
+                "db": backup.get("db"),
+                "type": "info",
+                "record": f"Backup with id {id} got deleted",
+            }
+        )
         return True
 
     def get(self, id: str) -> Dict[str, Any]:
@@ -205,6 +211,23 @@ class Backup:
                 "status": "success" if len(backups) == len(storages) else "failure",
             }
         )
+
+        if len(backups) == len(storages):
+            self._state.insert_log(
+                {
+                    "db": db_name,
+                    "type": "info",
+                    "record": f"Backup with id {backup_id} succeeded",
+                }
+            )
+        else:
+            self._state.insert_log(
+                {
+                    "db": db_name,
+                    "type": "error",
+                    "record": f"Backup with id {backup_id} failed",
+                }
+            )
 
         self._file_system.delete_file(file_path)
 

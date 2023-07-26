@@ -122,6 +122,15 @@ class Cron:
                             )
                             continue
 
+                    self._state.insert_log(
+                        {
+                            {
+                                "db": db,
+                                "type": "info",
+                                "record": "Run backup from a cron job",
+                            }
+                        }
+                    )
                     # Run a new backup
                     self._backup.run(db)
 

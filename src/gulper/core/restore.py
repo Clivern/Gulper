@@ -111,11 +111,24 @@ class Restore:
         try:
             database = get_database(self._config, backup.get("db"))
             database.restore("{}/{}".format(self._config.get_temp_dir(), file))
+            self._state.insert_log(
+                {
+                    "db": backup.get("db"),
+                    "type": "info",
+                    "record": f"Backup with id {id} restored successfully",
+                }
+            )
         except Exception as e:
+            self._state.insert_log(
+                {
+                    "db": backup.get("db"),
+                    "type": "error",
+                    "record": f"Failed to restore backup with id {id}",
+                }
+            )
             raise OperationFailed(
                 "Failed to restore database {}: {}".format(backup.get("db"), str(e))
             )
-
         return True
 
 
