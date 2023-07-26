@@ -348,6 +348,7 @@ class State:
                 query += " WHERE db = ?"
                 params = (db,)
 
+        query += " ORDER BY createdAt DESC"
         cursor.execute(query, params)
         results = cursor.fetchall()
         cursor.close()
