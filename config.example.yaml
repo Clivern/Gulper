@@ -38,8 +38,6 @@ storage:
   local_01:
     type: local
     path: /opt/backups/
-    # Keep 3 months worth of backups
-    retention: 3 months # x days or x years
 
   aws_s3_01:
     type: s3
@@ -48,7 +46,6 @@ storage:
     bucket_name: your_bucket_name
     region: your_region
     path: /
-    retention: 1 years
 
   do_s3_01:
     type: s3
@@ -58,17 +55,10 @@ storage:
     bucket_name: your_bucket_name
     region: nyc3
     path: /team_name/db_backups
-    retention: 1 years
-
-  local_02:
-    type: local
-    path: /mnt/data01
-    # Keep 20 days worth of backups
-    retention: 20 days
 
 schedule:
-    daily_01:
-      expression: "0 0 * * * *"  # Daily at midnight
+    hourly:
+      expression: "0 * * * *"
 
 database:
   db01:
@@ -82,7 +72,7 @@ database:
       - db02
     storage:
       - local_01
-    schedule: daily_01
+    schedule: hourly
     options:
       quote-names: True
       quick: True
@@ -94,7 +84,10 @@ database:
       single-transaction: True
       create-options: True
       comments: True
+      skip-ssl: True
+      no-tablespaces: True
       net_buffer_length: 16384
+    retention: 3 months
 
   db02:
     type: mysql
@@ -103,7 +96,7 @@ database:
     password: your_password
     storage:
       - local_01
-    schedule: daily_01
+    schedule: hourly
     options:
       add_drop_table: True
 
@@ -117,11 +110,11 @@ database:
       - db02
     storage:
       - aws_s3_01
-    schedule: daily_01
+    schedule: hourly
 
   db04:
     type: sqlite
     path: /opt/app/opswork.db
     storage:
       - local_02
-    schedule: daily_01
+    schedule: hourly

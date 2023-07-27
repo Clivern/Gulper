@@ -70,14 +70,20 @@ class Restore:
             bool: whether the restore succeeded or not
         """
         if db_name:
+            self._logger.get_logger().info(
+                f"Restore the database {db_name} to the latest backup"
+            )
             backup = self._state.get_latest_backup(db_name)
         elif backup_id:
+            self._logger.get_logger().info(f"Restore the backup {backup_id}")
             backup = self._state.get_backup_by_id(backup_id)
         else:
             raise Exception("Database name or backup id must be provided")
 
         if backup is None:
-            raise BackupNotFound(f"Backup with id {id} not found!")
+            raise BackupNotFound(
+                f"Unable to find a backup for db {db_name} or id {backup_id}"
+            )
 
         backup_exists = True
         meta = json.loads(backup.get("meta"))
@@ -85,6 +91,9 @@ class Restore:
         file = None
         for backup_file in meta["backups"]:
             try:
+                self._logger.get_logger().info(
+                    f"Download file {backup_file.get('file')} from storage {backup_file.get('storage_name')}"
+                )
                 storage = get_storage(self._config, backup_file.get("storage_name"))
                 local_file = "{}/{}.tar.gz".format(
                     self._config.get_temp_dir(), backup.get("id")
@@ -92,6 +101,9 @@ class Restore:
                 storage.download_file(backup_file.get("file"), local_file)
                 file = backup_file.get("file")
                 backup_exists = True
+                self._logger.get_logger().info(
+                    f"File {backup_file.get('file')} is downloaded from storage {backup_file.get('storage_name')}"
+                )
             except Exception as e:
                 backup_exists = False
                 self._logger.get_logger().error(
@@ -106,11 +118,15 @@ class Restore:
                 break
 
         if file is None:
+            self._logger.get_logger().error(f"Backup with id {id} not found!")
             raise BackupNotFound(f"Backup with id {id} not found!")
 
         try:
             database = get_database(self._config, backup.get("db"))
             database.restore("{}/{}".format(self._config.get_temp_dir(), file))
+            self._logger.get_logger().info(
+                f"Backup with id {backup.get('id')} restored successfully"
+            )
             self._state.insert_log(
                 {
                     "db": backup.get("db"),
@@ -119,6 +135,9 @@ class Restore:
                 }
             )
         except Exception as e:
+            self._logger.get_logger().error(
+                f"Failed to restore backup with id {backup.get('id')}"
+            )
             self._state.insert_log(
                 {
                     "db": backup.get("db"),

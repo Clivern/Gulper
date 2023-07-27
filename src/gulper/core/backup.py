@@ -97,15 +97,28 @@ class Backup:
         """
         backup = self._state.get_backup_by_id(id)
 
+        self._logger.get_logger().info(f"Attempt to delete a backup with id {id}")
+
         if backup is None:
+            self._logger.get_logger().info(f"A backup with id {id} not found")
             raise BackupNotFound(f"Backup with id {id} not found!")
 
         meta = json.loads(backup.get("meta"))
 
         for backup in meta["backups"]:
             try:
+                self._logger.get_logger().info(
+                    "Delete a file {} from storage {}".format(
+                        backup.get("file"), backup.get("storage_name")
+                    )
+                )
                 storage = get_storage(self._config, backup.get("storage_name"))
                 storage.delete_file(backup.get("file"))
+                self._logger.get_logger().info(
+                    "File {} is deleted from storage {}".format(
+                        backup.get("file"), backup.get("storage_name")
+                    )
+                )
             except Exception as e:
                 self._logger.get_logger().error(
                     "Unable to delete backup {} file {} from storage {}: {}".format(
@@ -117,6 +130,7 @@ class Backup:
                 )
 
         self._state.delete_backup(id)
+        self._logger.get_logger().info(f"A backup with id {id} is deleted")
         self._state.insert_log(
             {
                 "db": backup.get("db"),
@@ -139,6 +153,7 @@ class Backup:
         backup = self._state.get_backup_by_id(id)
 
         if backup is None:
+            self._logger.get_logger().info(f"A backup with id {id} not found")
             raise BackupNotFound(f"Backup with id {id} not found!")
 
         backup["meta"] = json.loads(backup.get("meta"))
@@ -151,6 +166,9 @@ class Backup:
                 storage = get_storage(self._config, file_backup.get("storage_name"))
                 file = storage.get_file(file_backup.get("file"))
                 paths.append(file.get("path"))
+                self._logger.get_logger().info(
+                    f"File {file_backup.get('file')} located in storage {file_backup.get('storage_name')}"
+                )
             except Exception as e:
                 backups_exists = False
                 self._logger.get_logger().warn(
@@ -179,6 +197,8 @@ class Backup:
         """
         db = get_database(self._config, db_name)
 
+        self._logger.get_logger().info(f"Backup the database with name {db_name}")
+
         file_path = db.backup()
         backup_id = os.path.basename(file_path).replace(".tar.gz", "")
 
@@ -191,17 +211,25 @@ class Backup:
             storage_config = self._config.get_storage_config(storage_name)
 
             if storage_config is None:
+                self._logger.get_logger().error(
+                    f"Storage {storage_name} configs are missing!"
+                )
                 raise Exception(f"Storage {storage_name} configs are missing!")
 
             remote_file_name = f"{backup_id}.tar.gz"
 
             try:
+                self._logger.get_logger().info(
+                    f"Upload file {file_path} to storage {storage_name}"
+                )
                 storage.upload_file(file_path, remote_file_name)
                 backups.append({"storage_name": storage_name, "file": remote_file_name})
             except Exception as e:
                 self._logger.get_logger().error(
                     f"Unable to upload file {file_path} to storage {storage_name}: {e}"
                 )
+
+        self._logger.get_logger().info(f"Store backup {backup_id} data")
 
         self._state.insert_backup(
             {
