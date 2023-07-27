@@ -115,7 +115,7 @@ class Restore:
                 {
                     "db": backup.get("db"),
                     "type": "info",
-                    "record": f"Backup with id {id} restored successfully",
+                    "record": f"Backup with id {backup.get('id')} restored successfully",
                 }
             )
         except Exception as e:
@@ -123,7 +123,7 @@ class Restore:
                 {
                     "db": backup.get("db"),
                     "type": "error",
-                    "record": f"Failed to restore backup with id {id}",
+                    "record": f"Failed to restore backup with id {backup.get('id')}",
                 }
             )
             raise OperationFailed(

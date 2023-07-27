@@ -22,7 +22,6 @@
 
 import os
 import uuid
-import shlex
 import subprocess
 from typing import Any, Dict, Optional
 from .database import Database
@@ -197,7 +196,9 @@ class MySQL(Database):
         Args:
             command (str): Command string to execute
         """
-        process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.run(
+            command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
 
         if process.returncode != 0:
             raise Exception(f"Error: {process.stderr.decode()}")
