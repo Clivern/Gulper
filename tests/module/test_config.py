@@ -107,9 +107,9 @@ def test_get_database_config():
 
 def test_parse_retention():
     config = get_config("config.example.yaml")
-    assert config._parse_retention("30 days") == 30
-    assert config._parse_retention("1 months") == 30
-    assert config._parse_retention("1 years") == 365
+    assert config._parse_retention("30 days") == 2592000
+    assert config._parse_retention("1 months") == 2592000
+    assert config._parse_retention("1 years") == 31536000
 
     with pytest.raises(ValueError):
         config._parse_retention("invalid format")
@@ -120,17 +120,17 @@ def test_parse_retention():
 
 def test_get_retention_in_days():
     config = get_config("config.example.yaml")
-    retention_days = config.get_retention_in_days("db01")
-    assert retention_days == 90
+    retention = config.get_retention_in_seconds("db01")
+    assert retention == 7776000
 
-    retention_days = config.get_retention_in_days("db02")
-    assert retention_days == 7
+    retention = config.get_retention_in_seconds("db02")
+    assert retention == 604800
 
-    retention_days = config.get_retention_in_days("db03")
-    assert retention_days == 365
+    retention = config.get_retention_in_seconds("db03")
+    assert retention == 31536000
 
     # Test non-existent storage
-    non_existent_retention = config.get_retention_in_days("non_existent")
+    non_existent_retention = config.get_retention_in_seconds("non_existent")
     assert non_existent_retention is None
 
 
