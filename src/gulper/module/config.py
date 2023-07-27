@@ -159,13 +159,13 @@ class Config:
 
     def _parse_retention(self, retention_str: str) -> int:
         """
-        Parse retention string into days.
+        Parse retention string into seconds.
 
         Args:
-            retention_str (str): Retention period (e.g., "3 months", "20 days", "1 year").
+            retention_str (str): Retention period (e.g., "3 months", "20 days", "1 year", "1 hour", "3 minutes").
 
         Returns:
-            int: Retention period in days.
+            int: Retention period in seconds.
 
         Raises:
             ValueError: If the unit is unsupported.
@@ -176,28 +176,43 @@ class Config:
             raise ValueError(
                 "Invalid retention format. Expected format is '<value> <unit>'."
             )
+        try:
+            value = int(parts[0])
+        except ValueError:
+            raise ValueError("Invalid value for retention period. Must be an integer.")
 
-        value = int(parts[0])
-        unit = parts[1]
+        unit = parts[1].lower()
 
-        if unit == "days" or unit == "day":
-            return value
-        elif unit == "months" or unit == "month":
-            return value * 30
-        elif unit == "years" or unit == "year":
-            return value * 365
-        else:
-            raise ValueError("Unsupported unit for retention period.")
+        # Conversion factors to seconds
+        seconds_per_unit = {
+            "second": 1,
+            "seconds": 1,
+            "minute": 60,
+            "minutes": 60,
+            "hour": 3600,
+            "hours": 3600,
+            "day": 86400,
+            "days": 86400,
+            "month": 2592000,  # Approximation: 30 days
+            "months": 2592000,
+            "year": 31536000,  # Approximation: 365 days
+            "years": 31536000,
+        }
 
-    def get_retention_in_days(self, db_name: str) -> Optional[int]:
+        if unit not in seconds_per_unit:
+            raise ValueError(f"Unsupported unit for retention period: '{unit}'.")
+
+        return value * seconds_per_unit[unit]
+
+    def get_retention_in_seconds(self, db_name: str) -> Optional[int]:
         """
-        Get the retention period in days for a specific storage.
+        Get the retention period in seconds for a specific database.
 
         Args:
             db_name (str): name of the database.
 
         Returns:
-            Optional[int]: Retention period in days if found; otherwise None.
+            Optional[int]: Retention period in seconds if found; otherwise None.
         """
         db_config = self.get_database_config(db_name)
 

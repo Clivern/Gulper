@@ -149,7 +149,7 @@ class Cron:
         """
         self._logger.get_logger().info(f"Check db {db_name} retention")
 
-        retention = self._config.get_retention_in_days(db_name)
+        retention = self._config.get_retention_in_seconds(db_name)
 
         if not retention:
             self._logger.get_logger().info(

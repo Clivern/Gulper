@@ -307,13 +307,13 @@ class State:
         )
 
     def get_stale_backups(
-        self, days: int, db: Optional[str] = None
+        self, seconds: int, db: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """
-        Retrieve stale backups older than X days.
+        Retrieve stale backups older than X seconds.
 
         Args:
-            days (int): Number of days to consider a backup as stale.
+            seconds (int): Number of seconds to consider a backup as stale.
             db (str, optional): The database identifier to filter backups. Defaults to None.
 
         Returns:
@@ -321,7 +321,8 @@ class State:
         """
         cursor = self._connection.cursor()
 
-        stale_date = datetime.now() - timedelta(days=days)
+        # Calculate the stale date based on seconds
+        stale_date = datetime.now() - timedelta(seconds=seconds)
         stale_date_str = stale_date.strftime("%Y-%m-%d %H:%M:%S")
 
         query = "SELECT * FROM backup WHERE createdAt < ?"
