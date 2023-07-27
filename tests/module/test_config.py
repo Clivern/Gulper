@@ -38,7 +38,6 @@ def test_config():
     )
     assert config.get_storages().get("aws_s3_01").get("region") == "your_region"
     assert config.get_storages().get("aws_s3_01").get("path") == "/"
-    assert config.get_storages().get("aws_s3_01").get("retention") == "1 years"
 
 
 def test_get_storages():
@@ -47,14 +46,14 @@ def test_get_storages():
     assert isinstance(storages, dict)
     assert "local_01" in storages
     assert "aws_s3_01" in storages
-    assert "local_02" in storages
+    assert "do_s3_01" in storages
 
 
 def test_get_schedules():
     config = get_config("config.example.yaml")
     schedules = config.get_schedules()
     assert isinstance(schedules, dict)
-    assert "daily_01" in schedules
+    assert "hourly" in schedules
 
 
 def test_get_databases():
@@ -64,7 +63,6 @@ def test_get_databases():
     assert "db01" in databases
     assert "db02" in databases
     assert "db03" in databases
-    assert "db04" in databases
 
 
 def test_get_storage_config():
@@ -72,7 +70,6 @@ def test_get_storage_config():
     storage_config = config.get_storage_config("local_01")
     assert isinstance(storage_config, dict)
     assert "path" in storage_config
-    assert "retention" in storage_config
 
     # Test non-existent storage
     non_existent_config = config.get_storage_config("non_existent")
@@ -81,7 +78,7 @@ def test_get_storage_config():
 
 def test_get_schedule_config():
     config = get_config("config.example.yaml")
-    schedule_config = config.get_schedule_config("daily_01")
+    schedule_config = config.get_schedule_config("hourly")
     assert isinstance(schedule_config, dict)
     assert "expression" in schedule_config
 
@@ -123,14 +120,14 @@ def test_parse_retention():
 
 def test_get_retention_in_days():
     config = get_config("config.example.yaml")
-    retention_days = config.get_retention_in_days("local_01")
-    assert retention_days == 90  # 3 months
+    retention_days = config.get_retention_in_days("db01")
+    assert retention_days == 90
 
-    retention_days = config.get_retention_in_days("aws_s3_01")
-    assert retention_days == 365  # 1 year
+    retention_days = config.get_retention_in_days("db02")
+    assert retention_days == 7
 
-    retention_days = config.get_retention_in_days("local_02")
-    assert retention_days == 20  # 20 days
+    retention_days = config.get_retention_in_days("db03")
+    assert retention_days == 365
 
     # Test non-existent storage
     non_existent_retention = config.get_retention_in_days("non_existent")

@@ -180,29 +180,29 @@ class Config:
         value = int(parts[0])
         unit = parts[1]
 
-        if unit == "days":
+        if unit == "days" or unit == "day":
             return value
-        elif unit == "months":
+        elif unit == "months" or unit == "month":
             return value * 30
-        elif unit == "years":
+        elif unit == "years" or unit == "year":
             return value * 365
         else:
             raise ValueError("Unsupported unit for retention period.")
 
-    def get_retention_in_days(self, storage_name: str) -> Optional[int]:
+    def get_retention_in_days(self, db_name: str) -> Optional[int]:
         """
         Get the retention period in days for a specific storage.
 
         Args:
-            storage_name (str): Name of the storage configuration.
+            db_name (str): name of the database.
 
         Returns:
             Optional[int]: Retention period in days if found; otherwise None.
         """
-        storage_config = self.get_storage_config(storage_name)
+        db_config = self.get_database_config(db_name)
 
-        if storage_config and "retention" in storage_config:
-            return self._parse_retention(storage_config["retention"])
+        if db_config and "retention" in db_config:
+            return self._parse_retention(db_config["retention"])
 
         return None
 

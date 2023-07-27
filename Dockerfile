@@ -8,7 +8,7 @@ RUN apt update
 RUN apt install -y mysql-client postgresql-client python3-pip
 
 # Install gulper
-RUN pip3 install gulper==0.0.5
+RUN pip3 install gulper==0.0.6
 
 # Verify the installation of mysqldump and pg_dump and gulper
 RUN mysqldump --version
