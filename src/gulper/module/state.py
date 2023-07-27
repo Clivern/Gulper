@@ -306,6 +306,57 @@ class State:
             else None
         )
 
+    def get_stale_backups(
+        self, days: int, db: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Retrieve stale backups older than X days.
+
+        Args:
+            days (int): Number of days to consider a backup as stale.
+            db (str, optional): The database identifier to filter backups. Defaults to None.
+
+        Returns:
+            List[Dict[str, Any]]: A list of dictionaries containing stale backup details.
+        """
+        cursor = self._connection.cursor()
+
+        stale_date = datetime.now() - timedelta(days=days)
+        stale_date_str = stale_date.strftime("%Y-%m-%d %H:%M:%S")
+
+        query = "SELECT * FROM backup WHERE createdAt < ?"
+        params = (stale_date_str,)
+
+        if db:
+            query += " AND db = ?"
+            params += (db,)
+
+        query += " ORDER BY createdAt DESC"
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+        cursor.close()
+
+        return (
+            [
+                dict(
+                    zip(
+                        [
+                            "id",
+                            "db",
+                            "meta",
+                            "status",
+                            "createdAt",
+                            "updatedAt",
+                        ],
+                        result,
+                    )
+                )
+                for result in results
+            ]
+            if results
+            else []
+        )
+
     def get_logs(
         self, db: Optional[str] = None, since: Optional[str] = None
     ) -> List[Dict[str, Any]]:

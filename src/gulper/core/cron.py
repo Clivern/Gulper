@@ -84,6 +84,8 @@ class Cron:
             for db, configs in dbs.items():
                 schedule_name = configs.get("schedule", None)
 
+                self.run_db_retention(db)
+
                 if not schedule_name:
                     continue
 
@@ -139,6 +141,31 @@ class Cron:
                 break
             else:
                 time.sleep(60)
+
+    def run_db_retention(self, db_name):
+        """
+        Run a database retention
+
+        Args:
+            db_name (str): The database name
+        """
+        self._logger.get_logger().info(f"Check db {db_name} retention")
+
+        retention = self._config.get_retention_in_days(db_name)
+
+        if not retention:
+            self._logger.get_logger().info(
+                f"Database {db_name} retention is not provided"
+            )
+            return None
+
+        backups = self._state.get_stale_backups(retention, db_name)
+
+        for backup in backups:
+            self._logger.get_logger().info(
+                f"Delete a backup with id {backup.get('id')}"
+            )
+            self._backup.delete(backup.get("id"))
 
 
 def get_cron(
