@@ -197,12 +197,10 @@ class MySQL(Database):
         Args:
             command (str): Command string to execute
         """
-        subprocess.check_call(
-            shlex.split(command),
-            shell=False,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
+        process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        if process.returncode != 0:
+            raise Exception(f"Error: {process.stderr.decode()}")
 
 
 def get_mysql(
