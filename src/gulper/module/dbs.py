@@ -22,6 +22,7 @@
 
 from .database import Database
 from .sqlite import get_sqlite
+from .mysql import get_mysql
 from .config import Config
 from .file_system import get_file_system
 
@@ -32,8 +33,18 @@ def get_database(config: Config, db_name: str) -> Database:
     if db_config is None:
         raise Exception(f"Database {db_name} not found")
 
-    # TODO: Add MySQL and PostgreSQL
     if db_config.get("type") == "sqlite":
         return get_sqlite(
             get_file_system(), config.get_temp_dir(), db_config.get("path")
+        )
+    elif db_config.get("type") == "mysql":
+        return get_mysql(
+            get_file_system(),
+            db_config.get("host"),
+            db_config.get("username"),
+            db_config.get("password"),
+            db_config.get("port", 3306),
+            db_config.get("database", []),
+            config.get_temp_dir(),
+            db_config.get("options", {}),
         )

@@ -218,6 +218,21 @@ class FileSystem:
             ),
         }
 
+    def write_to_file(self, path, content) -> bool:
+        """
+        Write to a file
+
+        Args:
+            path: The file path
+            content: The file content
+
+        Returns:
+            bool: whether the operation succeeded or not
+        """
+        with open(path, "w") as file:
+            file.write(content)
+        return True
+
 
 def get_file_system() -> FileSystem:
     return FileSystem()

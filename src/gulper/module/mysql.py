@@ -79,6 +79,8 @@ class MySQL(Database):
         backup_sql_path = os.path.join(self._temp_path, f"{backup_id}.sql")
         backup_tar_path = os.path.join(self._temp_path, f"{backup_id}.tar.gz")
 
+        self._file_system.write_to_file(backup_sql_path, "")
+
         command = self._build_dump_command(backup_sql_path)
 
         self._execute_command(command)
@@ -156,7 +158,7 @@ class MySQL(Database):
         """
         command = f"mysqldump -h {self._host} -u {self._username} -P {self._port} -p{self._password}"
 
-        if len(self._databases) > 0:
+        if self._databases and len(self._databases) > 0:
             dbs = " ".join(self._databases)
             command += f" --databases {dbs}"
         else:
@@ -195,7 +197,12 @@ class MySQL(Database):
         Args:
             command (str): Command string to execute
         """
-        subprocess.check_call(shlex.split(command), shell=False)
+        subprocess.check_call(
+            shlex.split(command),
+            shell=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
 
 
 def get_mysql(

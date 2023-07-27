@@ -76,6 +76,7 @@ database:
     host: localhost
     username: root
     password: your_password
+    port: 3306
     database:
       - db01
       - db02
@@ -83,7 +84,17 @@ database:
       - local_01
     schedule: daily_01
     options:
-      add_drop_table: True
+      quote-names: True
+      quick: True
+      add-drop-table: True
+      add-locks: True
+      allow-keywords: True
+      disable-keys: True
+      extended-insert: True
+      single-transaction: True
+      create-options: True
+      comments: True
+      net_buffer_length: 16384
 
   db02:
     type: mysql
