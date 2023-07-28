@@ -20,7 +20,9 @@ Gulper
 
 Gulper is a powerful and flexible command-line utility designed for backing up and restoring SQLite, MySQL, and PostgreSQL databases. It offers a range of features to streamline database management tasks, including scheduled backups, multiple storage options, and easy restoration.
 
-### Features
+
+Features
+========
 
 - **Multi-Database Support**: Backup and restore SQLite, MySQL, and PostgreSQL databases.
 - **Flexible Storage Options**: Store backups locally or in cloud storage (AWS S3, DigitalOcean Spaces).
@@ -30,7 +32,9 @@ Gulper is a powerful and flexible command-line utility designed for backing up a
 - **Retention Policies**: Automatically manage backup retention periods.
 - **Logging**: Comprehensive logging of all backup and restore activities.
 
-### Installation
+
+Installation
+============
 
 To install `gulper`, use the following command
 
@@ -38,7 +42,8 @@ To install `gulper`, use the following command
   $ pip install gulper
 
 
-### Configuration
+Configuration
+=============
 
 Gulper uses a YAML configuration file to manage settings. By default, it looks for the configuration at `/etc/config.yaml`. You can specify a different path using the `--config` option.
 
@@ -118,7 +123,8 @@ Example configuration:
       retention: 1 year
 
 
-### Usage
+Usage
+======
 
 Backup Commands
 
@@ -140,7 +146,9 @@ Log Commands
 
 - List logs: `gulper log list [--db DB] [--since SINCE] [--json]`
 
-### Examples
+
+Examples
+=========
 
 1. Backup a MySQL database:
 
