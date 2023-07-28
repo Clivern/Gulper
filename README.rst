@@ -179,3 +179,56 @@ Examples
 
   $ gulper cron --daemon
 
+
+Versioning
+==========
+
+For transparency into our release cycle and in striving to maintain backward
+compatibility, Tyran is maintained under the `Semantic Versioning guidelines`_
+and release process is predictable and business-friendly.
+
+.. _Semantic Versioning guidelines: https://semver.org/
+
+See the `Releases section of our GitHub project`_ for changelogs for each release
+version of Tyran. It contains summaries of the most noteworthy changes made
+in each release. Also see the `Milestones section`_ for the future roadmap.
+
+.. _Releases section of our GitHub project: https://github.com/Clivern/Gulper/releases
+.. _Milestones section: https://github.com/Clivern/Gulper/milestones
+
+
+Bug tracker
+===========
+
+If you have any suggestions, bug reports, or annoyances please report them to
+our issue tracker at https://github.com/Clivern/Gulper/issues
+
+
+Security Issues
+===============
+
+If you discover a security vulnerability within Tyran, please send an email to
+`hello@clivern.com <mailto:hello@clivern.com>`_
+
+.. _hello@clivern.com <mailto:hello@clivern.com>: mailto:hello@clivern.com
+
+
+Contributing
+============
+
+We are an open source, community-driven project so please feel free to join
+us. see the `contributing guidelines`_ for more details.
+
+.. _contributing guidelines: CONTRIBUTING.rst
+
+
+License
+=======
+
+© 2025, Gulper. Released under `MIT License`_.
+
+.. _MIT License: https://opensource.org/licenses/mit-license.php
+
+**Gulper** is authored and maintained by `Clivern <https://github.com/clivern>`_.
+
+
