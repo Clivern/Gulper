@@ -18,4 +18,150 @@
 Gulper
 =======
 
-A Command Line Tool to Backup and Restore SQLite, MySQL and PostgreSQL.
+Gulper is a powerful and flexible command-line utility designed for backing up and restoring SQLite, MySQL, and PostgreSQL databases. It offers a range of features to streamline database management tasks, including scheduled backups, multiple storage options, and easy restoration.
+
+### Features
+
+- **Multi-Database Support**: Backup and restore SQLite, MySQL, and PostgreSQL databases.
+- **Flexible Storage Options**: Store backups locally or in cloud storage (AWS S3, DigitalOcean Spaces).
+- **Scheduled Backups**: Automate backups using cron-like expressions.
+- **Point-in-Time Recovery**: Restore databases to a specific point in time.
+- **Compression**: Reduce backup size with built-in compression options.
+- **Retention Policies**: Automatically manage backup retention periods.
+- **Logging**: Comprehensive logging of all backup and restore activities.
+
+### Installation
+
+To install `gulper`, use the following command
+
+.. code-block::
+  $ pip install gulper
+
+
+### Configuration
+
+Gulper uses a YAML configuration file to manage settings. By default, it looks for the configuration at `/etc/config.yaml`. You can specify a different path using the `--config` option.
+
+Example configuration:
+
+.. code-block::
+  temp_dir: /tmp
+  state_file: /etc/gulper.db
+
+  logging:
+    level: error
+    handler: console
+    # path to log file if handler is a file
+    path: ~
+
+  storage:
+    local_01:
+      type: local
+      path: /opt/backups/
+
+    aws_s3_01:
+      type: s3
+      access_key_id: your_access_key_id
+      secret_access_key: your_secret_access_key
+      bucket_name: your_bucket_name
+      region: your_region
+      path: /
+
+    do_s3_01:
+      type: s3
+      access_key_id: your_access_key_id
+      secret_access_key: your_secret_access_key
+      endpoint_url: https://nyc3.digitaloceanspaces.com
+      bucket_name: your_bucket_name
+      region: nyc3
+      path: /team_name/db_backups
+
+  schedule:
+    hourly:
+      expression: 0 * * * *
+
+  database:
+    db01:
+      type: mysql
+      host: localhost
+      username: root
+      password: your_password
+      port: 3306
+      database:
+        - db01
+        - db02
+      storage:
+        - local_01
+      schedule: hourly
+      options:
+        quote-names: True
+        quick: True
+        add-drop-table: True
+        add-locks: True
+        allow-keywords: True
+        disable-keys: True
+        extended-insert: True
+        single-transaction: True
+        create-options: True
+        comments: True
+        skip-ssl: True
+        no-tablespaces: True
+        net_buffer_length: 16384
+      retention: 3 months
+
+    db03:
+      type: sqlite
+      path: /opt/app/opswork.db
+      storage:
+        - aws_s3_01
+      schedule: hourly
+      retention: 1 year
+
+
+### Usage
+
+Backup Commands
+
+- List backups: `gulper backup list [--db DB] [--since SINCE] [--json]`
+- Run backup: `gulper backup run DB [--json]`
+- Get backup details: `gulper backup get BACKUP_ID [--json]`
+- Delete backup: `gulper backup delete BACKUP_ID [--json]`
+
+Restore Commands
+
+- Restore from backup: `gulper restore run BACKUP_ID [--json]`
+- Restore specific database: `gulper restore db DB [--json]`
+
+Cron Command
+
+- Run scheduled backups: `gulper cron [--daemon]`
+
+Log Commands
+
+- List logs: `gulper log list [--db DB] [--since SINCE] [--json]`
+
+### Examples
+
+1. Backup a MySQL database:
+
+.. code-block::
+   gulper backup run db01
+
+
+2. Restore a PostgreSQL database from a specific backup:
+
+.. code-block::
+   gulper restore run backup_20250319_120000
+
+
+3. List all backups for a specific database:
+
+.. code-block::
+   gulper backup list --db db01
+
+
+4. Run scheduled backups in daemon mode:
+
+.. code-block::
+   gulper cron --daemon
+
