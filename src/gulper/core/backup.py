@@ -105,26 +105,26 @@ class Backup:
 
         meta = json.loads(backup.get("meta"))
 
-        for backup in meta["backups"]:
+        for file_backup in meta["backups"]:
             try:
                 self._logger.get_logger().info(
                     "Delete a file {} from storage {}".format(
-                        backup.get("file"), backup.get("storage_name")
+                        file_backup.get("file"), file_backup.get("storage_name")
                     )
                 )
-                storage = get_storage(self._config, backup.get("storage_name"))
-                storage.delete_file(backup.get("file"))
+                storage = get_storage(self._config, file_backup.get("storage_name"))
+                storage.delete_file(file_backup.get("file"))
                 self._logger.get_logger().info(
                     "File {} is deleted from storage {}".format(
-                        backup.get("file"), backup.get("storage_name")
+                        file_backup.get("file"), file_backup.get("storage_name")
                     )
                 )
             except Exception as e:
                 self._logger.get_logger().error(
                     "Unable to delete backup {} file {} from storage {}: {}".format(
                         id,
-                        backup.get("file"),
-                        backup.get("storage_name"),
+                        file_backup.get("file"),
+                        file_backup.get("storage_name"),
                         str(e),
                     )
                 )
