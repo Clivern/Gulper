@@ -28,12 +28,12 @@ from gulper.module import get_state
 from gulper.module import get_file_system
 from gulper.core import get_backup
 from gulper.core import get_cron
-from gulper.core import get_log
+from gulper.core import get_event
 from gulper.core import get_restore
 from gulper.command import get_backup_command
 from gulper.command import get_cron_command
 from gulper.command import get_restore_command
-from gulper.command import get_log_command
+from gulper.command import get_event_command
 from gulper.module import get_schedule
 from gulper.module import get_output
 
@@ -237,19 +237,19 @@ def cron(ctx, daemon):
 
 @main.group()
 @click.pass_context
-def log(ctx):
-    """Log related commands"""
+def event(ctx):
+    """Event related commands"""
     pass
 
 
-@log.command("list", help="List available logs.")
-@click.option("--db", help="Database name to filter logs")
-@click.option("--since", help="Time range for listing logs")
+@event.command("list", help="List available events.")
+@click.option("--db", help="Database name to filter events")
+@click.option("--since", help="Time range for listing events")
 @click.option("--json", is_flag=True, help="Return output as JSON")
 @click.pass_context
-def log_list(ctx, db, since, json):
+def event_list(ctx, db, since, json):
     """
-    List backup and restore logs
+    List backup and restore events
 
     Args:
         db (str): The database name
@@ -263,9 +263,9 @@ def log_list(ctx, db, since, json):
         config.get_logging_path(),
     )
     state = get_state(config.get_state_file())
-    log = get_log(config, state, logger)
-    log_command = get_log_command(log, get_output())
-    return log_command.list(db, since, json)
+    event = get_event(config, state, logger)
+    event_command = get_event_command(event, get_output())
+    return event_command.list(db, since, json)
 
 
 if __name__ == "__main__":

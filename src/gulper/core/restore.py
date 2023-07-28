@@ -127,7 +127,7 @@ class Restore:
             self._logger.get_logger().info(
                 f"Backup with id {backup.get('id')} restored successfully"
             )
-            self._state.insert_log(
+            self._state.insert_event(
                 {
                     "db": backup.get("db"),
                     "type": "info",
@@ -138,7 +138,7 @@ class Restore:
             self._logger.get_logger().error(
                 f"Failed to restore backup with id {backup.get('id')}"
             )
-            self._state.insert_log(
+            self._state.insert_event(
                 {
                     "db": backup.get("db"),
                     "type": "error",

@@ -23,4 +23,4 @@
 from .backup import Backup, get_backup
 from .restore import Restore, get_restore
 from .cron import Cron, get_cron
-from .log import Log, get_log
+from .event import Event, get_event

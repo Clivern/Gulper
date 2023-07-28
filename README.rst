@@ -61,6 +61,10 @@ Example configuration:
     # path to log file if handler is a file
     path: ~
 
+  # Stored events configs
+  event:
+    retention: 1 month
+
   storage:
     local_01:
       type: local
@@ -146,7 +150,7 @@ Cron Command
 
 Log Commands
 
-- List logs: ``gulper log list [--db DB] [--since SINCE] [--json]``
+- List events: ``gulper event list [--db DB] [--since SINCE] [--json]``
 
 
 Examples

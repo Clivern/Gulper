@@ -28,10 +28,4 @@ from .config import Config, get_config
 from .schedule import Schedule, get_schedule
 from .storage import Storage, get_storage
 from .state import State, get_state
-from .util import success
-from .util import error
-from .util import message
-from .util import backups_table
-from .util import logs_table
-from .util import backup_info
 from .output import Output, get_output

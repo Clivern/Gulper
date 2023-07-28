@@ -167,12 +167,12 @@ class Output:
         self._console.print(md)
         exit(0)
 
-    def show_logs(self, data: list[Dict[str, Any]], as_json: bool):
+    def show_events(self, data: list[Dict[str, Any]], as_json: bool):
         """
-        Show Logs list
+        Show Events list
 
         Args:
-            data (list[Dict[str, Any]]): A list of logs
+            data (list[Dict[str, Any]]): A list of events
             as_json (bool): Whether to output as json
         """
         if as_json:
@@ -192,7 +192,7 @@ class Output:
             return
 
         # Create a table
-        table = Table(title="Log Records")
+        table = Table(title="Events")
 
         # Add columns
         table.add_column("ID", style="cyan", no_wrap=True)

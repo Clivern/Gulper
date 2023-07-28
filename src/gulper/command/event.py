@@ -20,65 +20,54 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from gulper.module import Config
-from gulper.module import State
-from gulper.module import Logger
-from typing import Any, Dict, Optional
+from typing import Optional
+from gulper.core import Event
+from gulper.module import Output
 
 
-class Log:
+class EventCommand:
     """
-    Log Core Functionalities
+    Event Command
     """
 
-    def __init__(self, config: Config, state: State, logger: Logger):
+    def __init__(self, event: Event, output: Output):
         """
         Class Constructor
 
         Args:
-            config (Config): A config instance
-            state (State): A state instance
-            logger (Logger): A logger instance
+            event (Event): The event class instance
+            output (Output): output class instance
         """
-        self._config = config
-        self._state = state
-        self._logger = logger
+        self._event = event
+        self._output = output
+        self._event.setup()
 
-    def setup(self):
+    def list(self, db_name: Optional[str], since: Optional[str], as_json: bool):
         """
-        Setup calls
-        """
-        self._logger.get_logger().info("Connect into the state database")
-        self._state.connect()
-        self._logger.get_logger().info("Migrate the state database tables")
-        self._state.migrate()
-
-    def list(
-        self, db_name: Optional[str], since: Optional[str]
-    ) -> list[Dict[str, Any]]:
-        """
-        Get a list of logs
+        Output a list of events
 
         Args:
             db_name (str): The database name
             since (str): A certain period for the backup
-
-        Returns:
-            list[Dict[str, Any]]: A list of logs
+            as_json (bool): whether to output as JSON
         """
-        return self._state.get_logs(db_name, since)
+        try:
+            events = self._event.list(db_name, since)
+        except Exception as e:
+            self._output.error_message(str(e), as_json)
+
+        self._output.show_events(events, as_json)
 
 
-def get_log(config: Config, state: State, logger: Logger) -> Log:
+def get_event_command(event: Event, output: Output) -> EventCommand:
     """
-    Get Log Class Instance
+    Get an instance of event command
 
     Args:
-        config (Config): A config instance
-        state (State): A state instance
-        logger (Logger): A logger instance
+        event (Event): An instance of event class
+        output (Output): output class instance
 
     Returns:
-        Restore: An instance of log class
+        EventCommand: an instance of event command
     """
-    return Log(config, state, logger)
+    return EventCommand(event, output)

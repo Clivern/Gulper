@@ -55,7 +55,7 @@ class State:
             "CREATE TABLE IF NOT EXISTS backup (id TEXT, db TEXT, meta TEXT, status TEXT, createdAt TEXT, updatedAt TEXT)"
         )
         cursor.execute(
-            "CREATE TABLE IF NOT EXISTS log (id TEXT, db TEXT, record TEXT, type TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
+            "CREATE TABLE IF NOT EXISTS event (id TEXT, db TEXT, record TEXT, type TEXT, meta TEXT, createdAt TEXT, updatedAt TEXT)"
         )
 
         cursor.close()
@@ -88,11 +88,11 @@ class State:
 
         return result.rowcount
 
-    def insert_log(self, log: Dict[str, Any]) -> int:
-        """Insert a new log record
+    def insert_event(self, event: Dict[str, Any]) -> int:
+        """Insert a new event record
 
         Args:
-            log (Dict): The log data
+            event (Dict): The event data
 
         Returns:
             The total rows inserted
@@ -100,13 +100,13 @@ class State:
         cursor = self._connection.cursor()
 
         result = cursor.execute(
-            "INSERT INTO log VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))",
+            "INSERT INTO event VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))",
             (
-                log.get("id", str(uuid.uuid4())),
-                log.get("db"),
-                log.get("record"),
-                log.get("type"),
-                log.get("meta", "{}"),
+                event.get("id", str(uuid.uuid4())),
+                event.get("db"),
+                event.get("record"),
+                event.get("type"),
+                event.get("meta", "{}"),
             ),
         )
 
@@ -127,14 +127,14 @@ class State:
         cursor.close()
         self._connection.commit()
 
-    def delete_log(self, id: str) -> None:
-        """Delete a log by its ID.
+    def delete_event(self, id: str) -> None:
+        """Delete an event by its ID.
 
         Args:
-            id (str): The ID of the log to delete.
+            id (str): The ID of the event to delete.
         """
         cursor = self._connection.cursor()
-        cursor.execute("DELETE FROM log WHERE id = ?", (id,))
+        cursor.execute("DELETE FROM event WHERE id = ?", (id,))
         cursor.close()
         self._connection.commit()
 
@@ -170,17 +170,17 @@ class State:
             else None
         )
 
-    def get_log_by_id(self, id: str) -> Dict[str, Any]:
-        """Retrieve a log by its ID.
+    def get_event_by_id(self, id: str) -> Dict[str, Any]:
+        """Retrieve a event by its ID.
 
         Args:
-            id (str): The ID of the log to retrieve.
+            id (str): The ID of the event to retrieve.
 
         Returns:
-            Dict[str, Any]: A dictionary containing the log details.
+            Dict[str, Any]: A dictionary containing the event details.
         """
         cursor = self._connection.cursor()
-        cursor.execute("SELECT * FROM log WHERE id = ?", (id,))
+        cursor.execute("SELECT * FROM event WHERE id = ?", (id,))
         result = cursor.fetchone()
         cursor.close()
 
@@ -358,18 +358,18 @@ class State:
             else []
         )
 
-    def get_logs(
+    def get_events(
         self, db: Optional[str] = None, since: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """
-        Retrieve logs based on database identifier and time filter.
+        Retrieve events based on database identifier and time filter.
 
         Args:
             db (str, optional): The database identifier to filter backups. Defaults to None.
             since (str, optional): Human-readable time filter (e.g., "3 hours ago", "1 day ago", "1 month ago"). Defaults to None.
 
         Returns:
-            List[Dict[str, Any]]: A list of dictionaries containing log details.
+            List[Dict[str, Any]]: A list of dictionaries containing event details.
         """
         cursor = self._connection.cursor()
 
@@ -386,14 +386,14 @@ class State:
             since_datetime_str = since_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
             # Prepare SQL query with time filter
-            query = "SELECT * FROM log WHERE createdAt >= ?"
+            query = "SELECT * FROM event WHERE createdAt >= ?"
             params = (since_datetime_str,)
 
             if db:
                 query += " AND db = ?"
                 params += (db,)
         else:
-            query = "SELECT * FROM log"
+            query = "SELECT * FROM event"
             params = ()
 
             if db:

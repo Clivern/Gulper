@@ -125,7 +125,7 @@ class Cron:
                             continue
 
                     self._logger.get_logger().info(f"Run a backup for database {db}")
-                    self._state.insert_log(
+                    self._state.insert_event(
                         {
                             "db": db,
                             "type": "info",

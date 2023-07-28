@@ -94,6 +94,15 @@ class Config:
         """
         return self.config.get("logging").get("path", "~")
 
+    def get_event_retention(self) -> str:
+        """
+        Get event retention
+
+        Returns:
+            str: the event retention
+        """
+        return self.config.get("event").get("retention", "1 month")
+
     def get_storages(self) -> Dict[str, Any]:
         """
         Get all storage configurations.

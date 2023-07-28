@@ -131,7 +131,7 @@ class Backup:
 
         self._state.delete_backup(id)
         self._logger.get_logger().info(f"A backup with id {id} is deleted")
-        self._state.insert_log(
+        self._state.insert_event(
             {
                 "db": backup.get("db"),
                 "type": "info",
@@ -241,7 +241,7 @@ class Backup:
         )
 
         if len(backups) == len(storages):
-            self._state.insert_log(
+            self._state.insert_event(
                 {
                     "db": db_name,
                     "type": "info",
@@ -249,7 +249,7 @@ class Backup:
                 }
             )
         else:
-            self._state.insert_log(
+            self._state.insert_event(
                 {
                     "db": db_name,
                     "type": "error",
