@@ -5,6 +5,9 @@
 .. image:: https://img.shields.io/pypi/v/gulper.svg
     :alt: PyPI-Server
     :target: https://pypi.org/project/gulper/
+.. image:: https://img.shields.io/badge/Docker-0.0.11-1abc9c.svg
+    :alt: Docker Image
+    :target: https://hub.docker.com/r/clivern/gulper/tags
 .. image:: https://github.com/Clivern/Gulper/actions/workflows/ci.yml/badge.svg?branch=main
     :alt: Build Status
     :target: https://github.com/Clivern/Gulper/actions/workflows/ci.yml
