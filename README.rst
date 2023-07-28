@@ -64,7 +64,6 @@ Example configuration:
     # path to log file if handler is a file
     path: ~
 
-  # Stored events configs
   event:
     retention: 1 month
 

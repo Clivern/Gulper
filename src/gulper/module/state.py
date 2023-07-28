@@ -427,6 +427,51 @@ class State:
             else []
         )
 
+    def get_stale_events(self, seconds: int) -> List[Dict[str, Any]]:
+        """
+        Retrieve stale events older than X seconds.
+
+        Args:
+            seconds (int): Number of seconds to consider an event as stale.
+
+        Returns:
+            List[Dict[str, Any]]: A list of dictionaries containing stale events details.
+        """
+        cursor = self._connection.cursor()
+
+        # Calculate the stale date based on seconds
+        stale_date = datetime.now() - timedelta(seconds=seconds)
+        stale_date_str = stale_date.strftime("%Y-%m-%d %H:%M:%S")
+
+        query = "SELECT * FROM event WHERE createdAt < ? ORDER BY createdAt DESC"
+        params = (stale_date_str,)
+
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+        cursor.close()
+
+        return (
+            [
+                dict(
+                    zip(
+                        [
+                            "id",
+                            "db",
+                            "record",
+                            "type",
+                            "meta",
+                            "createdAt",
+                            "updatedAt",
+                        ],
+                        result,
+                    )
+                )
+                for result in results
+            ]
+            if results
+            else []
+        )
+
     def _parse_human_readable_time(self, time_str: str) -> Optional[datetime]:
         """
         Parse human-readable time string into a datetime object.

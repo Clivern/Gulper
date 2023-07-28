@@ -85,6 +85,7 @@ class Cron:
                 schedule_name = configs.get("schedule", None)
 
                 self.run_db_retention(db)
+                self.run_event_retention()
 
                 if not schedule_name:
                     continue
@@ -164,6 +165,19 @@ class Cron:
                 f"Delete a backup with id {backup.get('id')}"
             )
             self._backup.delete(backup.get("id"))
+
+    def run_event_retention(self):
+        """
+        Run Events Retention
+        """
+        self._logger.get_logger().info("Run event retention")
+
+        retention = self._config.get_event_retention_in_seconds()
+        events = self._state.get_stale_events(retention)
+
+        for event in events:
+            self._logger.get_logger().info(f"Delete an event with id {event.get('id')}")
+            self._state.delete_event(event.get("id"))
 
 
 def get_cron(
