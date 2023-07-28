@@ -61,7 +61,6 @@ Example configuration:
   logging:
     level: error
     handler: console
-    # path to log file if handler is a file
     path: ~
 
   event:
@@ -136,54 +135,67 @@ Usage
 
 Backup Commands
 
-- List backups: ``gulper backup list [--db DB] [--since SINCE] [--json]``
-- Run backup: ``gulper backup run DB [--json]``
-- Get backup details: ``gulper backup get BACKUP_ID [--json]``
-- Delete backup: ``gulper backup delete BACKUP_ID [--json]``
+- List backups: ``gulper [--config PATH] backup list [--db DB] [--since SINCE] [--json]``
+- Run backup: ``gulper [--config PATH] backup run DB [--json]``
+- Get backup details: ``gulper [--config PATH] backup get BACKUP_ID [--json]``
+- Delete backup: ``gulper [--config PATH] backup delete BACKUP_ID [--json]``
 
 Restore Commands
 
-- Restore from backup: ``gulper restore run BACKUP_ID [--json]``
-- Restore specific database: ``gulper restore db DB [--json]``
+- Restore from backup: ``gulper [--config PATH] restore run BACKUP_ID [--json]``
+- Restore specific database: ``gulper [--config PATH] restore db DB [--json]``
 
 Cron Command
 
-- Run scheduled backups: ``gulper cron [--daemon]``
+- Run scheduled backups: ``gulper [--config PATH] cron [--daemon]``
 
-Log Commands
+Event Command
 
-- List events: ``gulper event list [--db DB] [--since SINCE] [--json]``
+- List events: ``gulper [--config PATH] event list [--db DB] [--since SINCE] [--json]``
 
 
 Examples
 =========
 
-1. Backup a MySQL database:
+1. Backup a database (``MySQL`` or ``SQLite`` or ``PostgreSQL``):
 
 .. code-block::
 
-   $ gulper backup run db01
+   $ gulper --config config.yaml backup run $dbName
 
 
-2. Restore a PostgreSQL database from a specific backup:
-
-.. code-block::
-
-   $ gulper restore run backup_20250319_120000
-
-
-3. List all backups for a specific database:
+2. Restore a database from a specific backup or the latest db backup
 
 .. code-block::
 
-   $ gulper backup list --db db01
+   $ gulper --config config.yaml restore run $backupId
+   $ gulper --config config.yaml restore db $dbName
+
+
+3. List all backups or for a specific database:
+
+.. code-block::
+
+   $ gulper --config config.yaml backup list
+   $ gulper --config config.yaml backup list --json
+   $ gulper --config config.yaml backup list --db $dbName
+   $ gulper --config config.yaml backup list --db $dbName --since "3 hours ago"
 
 
 4. Run scheduled backups in ``daemon`` mode:
 
 .. code-block::
 
-  $ gulper cron --daemon
+  $ gulper --config config.yaml cron --daemon
+
+
+5. To get a list of ``events``.
+
+.. code-block::
+
+  $ gulper --config config.yaml event list
+  $ gulper --config config.yaml event list --db $dbName --since "1 hour ago"
+  $ gulper --config config.yaml event list --json
 
 
 Versioning
