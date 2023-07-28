@@ -69,7 +69,7 @@ class Event:
         return self._state.get_events(db_name, since)
 
 
-def get_evemt(config: Config, state: State, logger: Logger) -> Event:
+def get_event(config: Config, state: State, logger: Logger) -> Event:
     """
     Get Event Class Instance
 
