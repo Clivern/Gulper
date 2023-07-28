@@ -173,7 +173,7 @@ Examples
    $ gulper backup list --db db01
 
 
-4. Run scheduled backups in daemon mode:
+4. Run scheduled backups in ``daemon`` mode:
 
 .. code-block::
 
@@ -207,7 +207,7 @@ our issue tracker at https://github.com/Clivern/Gulper/issues
 Security Issues
 ===============
 
-If you discover a security vulnerability within Tyran, please send an email to
+If you discover a security vulnerability within Gulper, please send an email to
 `hello@clivern.com <mailto:hello@clivern.com>`_
 
 .. _hello@clivern.com <mailto:hello@clivern.com>: mailto:hello@clivern.com
@@ -230,5 +230,4 @@ License
 .. _MIT License: https://opensource.org/licenses/mit-license.php
 
 **Gulper** is authored and maintained by `Clivern <https://github.com/clivern>`_.
-
 
