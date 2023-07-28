@@ -39,6 +39,7 @@ Installation
 To install ``gulper``, use the following command
 
 .. code-block::
+
   $ pip install gulper
 
 
@@ -49,7 +50,8 @@ Gulper uses a YAML configuration file to manage settings. By default, it looks f
 
 Example configuration:
 
-.. code-block::
+.. code-block:: yaml
+
   temp_dir: /tmp
   state_file: /etc/gulper.db
 
@@ -153,23 +155,27 @@ Examples
 1. Backup a MySQL database:
 
 .. code-block::
-   gulper backup run db01
+
+   $ gulper backup run db01
 
 
 2. Restore a PostgreSQL database from a specific backup:
 
 .. code-block::
-   gulper restore run backup_20250319_120000
+
+   $ gulper restore run backup_20250319_120000
 
 
 3. List all backups for a specific database:
 
 .. code-block::
-   gulper backup list --db db01
+
+   $ gulper backup list --db db01
 
 
 4. Run scheduled backups in daemon mode:
 
 .. code-block::
-   gulper cron --daemon
+
+  $ gulper cron --daemon
 
