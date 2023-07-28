@@ -18,25 +18,25 @@
 Gulper
 =======
 
-Gulper is a powerful and flexible command-line utility designed for backing up and restoring SQLite, MySQL, and PostgreSQL databases. It offers a range of features to streamline database management tasks, including scheduled backups, multiple storage options, and easy restoration.
+``Gulper`` is a powerful and flexible command-line utility designed for backing up and restoring ``SQLite``, ``MySQL``, and ``PostgreSQL`` databases. It offers a range of features to streamline database management tasks, including scheduled backups, multiple storage options, and easy restoration.
 
 
 Features
 ========
 
-- **Multi-Database Support**: Backup and restore SQLite, MySQL, and PostgreSQL databases.
-- **Flexible Storage Options**: Store backups locally or in cloud storage (AWS S3, DigitalOcean Spaces).
+- **Multi-Database Support**: Backup and restore ``SQLite``, ``MySQL``, and ``PostgreSQL`` databases.
+- **Flexible Storage Options**: Store backups locally or in cloud storage (``AWS S3``, ``DigitalOcean Spaces``).
 - **Scheduled Backups**: Automate backups using cron-like expressions.
 - **Point-in-Time Recovery**: Restore databases to a specific point in time.
-- **Compression**: Reduce backup size with built-in compression options.
-- **Retention Policies**: Automatically manage backup retention periods.
-- **Logging**: Comprehensive logging of all backup and restore activities.
+- **Compression**: Reduce backup size with built-in ``compression`` options.
+- **Retention Policies**: Automatically manage backup ``retention`` periods.
+- **Logging**: Comprehensive ``logging`` of all backup and restore activities.
 
 
 Installation
 ============
 
-To install `gulper`, use the following command
+To install ``gulper``, use the following command
 
 .. code-block::
   $ pip install gulper
@@ -45,7 +45,7 @@ To install `gulper`, use the following command
 Configuration
 =============
 
-Gulper uses a YAML configuration file to manage settings. By default, it looks for the configuration at `/etc/config.yaml`. You can specify a different path using the `--config` option.
+Gulper uses a YAML configuration file to manage settings. By default, it looks for the configuration at ``/etc/config.yaml``. You can specify a different path using the ``--config`` option.
 
 Example configuration:
 
@@ -128,23 +128,23 @@ Usage
 
 Backup Commands
 
-- List backups: `gulper backup list [--db DB] [--since SINCE] [--json]`
-- Run backup: `gulper backup run DB [--json]`
-- Get backup details: `gulper backup get BACKUP_ID [--json]`
-- Delete backup: `gulper backup delete BACKUP_ID [--json]`
+- List backups: ``gulper backup list [--db DB] [--since SINCE] [--json]``
+- Run backup: ``gulper backup run DB [--json]``
+- Get backup details: ``gulper backup get BACKUP_ID [--json]``
+- Delete backup: ``gulper backup delete BACKUP_ID [--json]``
 
 Restore Commands
 
-- Restore from backup: `gulper restore run BACKUP_ID [--json]`
-- Restore specific database: `gulper restore db DB [--json]`
+- Restore from backup: ``gulper restore run BACKUP_ID [--json]``
+- Restore specific database: ``gulper restore db DB [--json]``
 
 Cron Command
 
-- Run scheduled backups: `gulper cron [--daemon]`
+- Run scheduled backups: ``gulper cron [--daemon]``
 
 Log Commands
 
-- List logs: `gulper log list [--db DB] [--since SINCE] [--json]`
+- List logs: ``gulper log list [--db DB] [--since SINCE] [--json]``
 
 
 Examples
