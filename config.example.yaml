@@ -99,6 +99,7 @@ database:
     username: root
     password: your_password
     database: db01
+    port: 5432
     storage:
       - aws_s3_01
     schedule: hourly

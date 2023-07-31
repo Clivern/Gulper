@@ -55,7 +55,7 @@ def get_database(config: Config, db_name: str) -> Database:
             db_config.get("host"),
             db_config.get("username"),
             db_config.get("password"),
-            db_config.get("port", 3306),
+            db_config.get("port", 5432),
             db_config.get("database", None),
             config.get_temp_dir(),
         )
