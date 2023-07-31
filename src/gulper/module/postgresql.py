@@ -154,7 +154,7 @@ class PostgreSQL(Database):
         Args:
             output_file (str): The output file
         """
-        if self._databases:
+        if self._database:
             # For specific databases, use pg_dump
             command = f"PGPASSWORD={self._password} pg_dump -h {self._host} -U {self._username} -p {self._port} -d {self._database}"
             command += f" -c -C > {output_file}"
