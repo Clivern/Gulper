@@ -98,9 +98,7 @@ database:
     host: localhost
     username: root
     password: your_password
-    database:
-      - db01
-      - db02
+    database: db01
     storage:
       - aws_s3_01
     schedule: hourly

@@ -22,6 +22,7 @@
 
 from .database import Database
 from .sqlite import get_sqlite
+from .postgresql import get_postgresql
 from .mysql import get_mysql
 from .config import Config
 from .file_system import get_file_system
@@ -47,4 +48,14 @@ def get_database(config: Config, db_name: str) -> Database:
             db_config.get("database", []),
             config.get_temp_dir(),
             db_config.get("options", {}),
+        )
+    elif db_config.get("type") == "postgresql":
+        return get_postgresql(
+            get_file_system(),
+            db_config.get("host"),
+            db_config.get("username"),
+            db_config.get("password"),
+            db_config.get("port", 3306),
+            db_config.get("database", None),
+            config.get_temp_dir(),
         )

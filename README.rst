@@ -1,11 +1,11 @@
-.. image:: https://images.unsplash.com/photo-1581059729226-c493d3086748
+.. image:: https://images.unsplash.com/photo-1589995186011-a7b485edc4bf
   :width: 700
   :alt: Cover Photo
 
 .. image:: https://img.shields.io/pypi/v/gulper.svg
     :alt: PyPI-Server
     :target: https://pypi.org/project/gulper/
-.. image:: https://img.shields.io/badge/Docker-0.0.11-1abc9c.svg
+.. image:: https://img.shields.io/badge/Docker-0.0.12-1abc9c.svg
     :alt: Docker Image
     :target: https://hub.docker.com/r/clivern/gulper/tags
 .. image:: https://github.com/Clivern/Gulper/actions/workflows/ci.yml/badge.svg?branch=main
@@ -120,6 +120,17 @@ Example configuration:
         no-tablespaces: True
         net_buffer_length: 16384
       retention: 3 months
+
+    db02:
+      type: postgresql
+      host: localhost
+      username: root
+      password: your_password
+      database: db01
+      storage:
+        - aws_s3_01
+      schedule: hourly
+      retention: 7 days
 
     db03:
       type: sqlite
