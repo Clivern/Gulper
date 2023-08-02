@@ -71,7 +71,7 @@ features:
 
         - title: Daemon Mode Support
           description: Run scheduled backups continuously in daemon mode for uninterrupted service.
-          icon: robot
+          icon: cloud
 
         - title: Event Management
           description: List and manage events related to backups and restores for better monitoring.
