@@ -47,11 +47,11 @@ features:
 
         - title: Compression
           description: Reduce backup size with built-in compression options for efficient storage.
-          icon: compress
+          icon: mic
 
         - title: Retention Policies
           description: Automatically manage backup retention periods for organized storage.
-          icon: calendar-check
+          icon: package
 
         - title: Comprehensive Logging
           description: Log all backup and restore activities for detailed tracking.
@@ -59,7 +59,7 @@ features:
 
         - title: YAML Configuration
           description: Manage settings through a flexible YAML configuration file.
-          icon: file-code
+          icon: bell
 
         - title: Command-Line Interface
           description: Use intuitive commands for backup, restore, and event management.
