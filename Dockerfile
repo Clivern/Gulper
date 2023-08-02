@@ -7,8 +7,9 @@ RUN apt update
 # Install MySQL and PostgreSQL client tools
 RUN apt install -y mysql-client postgresql-client python3-pip
 
-# Install gulper
+# Install gulper & pew
 RUN pip3 install gulper==0.0.14 --break-system-packages
+RUN pip3 install pew --break-system-packages
 
 # Verify the installation of mysqldump and pg_dump and gulper
 RUN mysqldump --version
