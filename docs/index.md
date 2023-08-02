@@ -21,8 +21,8 @@ hero:
       icon: edit
 
   download_link:
-    label: Latest Release v0.0.14
-    url: https://github.com/Clivern/Gulper/releases/tag/0.0.14
+    label: Latest Release v0.0.15
+    url: https://github.com/Clivern/Gulper/releases/tag/0.0.15
 
 features:
   rows:
