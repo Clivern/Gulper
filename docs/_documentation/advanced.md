@@ -114,7 +114,7 @@ version: '3.8'
 
 services:
   glp_backup:
-    image: clivern/gulper:0.0.14
+    image: clivern/gulper:0.0.15
     command: gulper --config /opt/gulper/config/config.yaml cron --daemon
     restart: unless-stopped
     depends_on:
@@ -133,7 +133,7 @@ services:
       - pg_data:/var/lib/postgresql/data
 
   ms_db:
-    image: 'mysql:8.4'
+    image: mysql:8.4
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=appdb
