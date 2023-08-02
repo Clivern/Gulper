@@ -97,20 +97,20 @@ Options:
 
 ## Examples
 
-1. Backup a database (`MySQL`, `SQLite`, or `PostgreSQL`):
+- Backup a database (`MySQL`, `SQLite`, or `PostgreSQL`):
 
 ```
 $ gulper --config config.yaml backup run $dbName
 ```
 
-2. Restore a database from a specific backup or the latest db `backup`:
+- Restore a database from a specific backup or the latest db `backup`:
 
 ```
 $ gulper --config config.yaml restore run $backupId
 $ gulper --config config.yaml restore db $dbName
 ```
 
-3. List all backups or for a specific `database`:
+- List all backups or for a specific `database`:
 
 ```
 $ gulper --config config.yaml backup list
@@ -119,13 +119,13 @@ $ gulper --config config.yaml backup list --db $dbName
 $ gulper --config config.yaml backup list --db $dbName --since "3 hours ago"
 ```
 
-4. Run scheduled backups in `daemon` mode:
+- Run scheduled backups in `daemon` mode:
 
 ```
 $ gulper --config config.yaml cron --daemon
 ```
 
-5. List `events`:
+- List `events`:
 
 ```
 $ gulper --config config.yaml event list
