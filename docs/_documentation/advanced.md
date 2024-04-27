@@ -114,7 +114,7 @@ version: '3.8'
 
 services:
   glp_backup:
-    image: clivern/gulper:0.0.15
+    image: clivern/gulper:0.0.16
     command: gulper --config /opt/gulper/config/config.yaml cron --daemon
     restart: unless-stopped
     depends_on:
