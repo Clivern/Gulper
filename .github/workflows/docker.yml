@@ -25,7 +25,7 @@ jobs:
           images: clivern/gulper
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@806c75105a1251cac8905df5dd4723b33174552c
+        uses: docker/build-push-action@83bfd93ab480705a7b99a2ed02765137f5ab55ba
         with:
           context: .
           file: ./Dockerfile
