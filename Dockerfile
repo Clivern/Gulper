@@ -1,5 +1,5 @@
 # Use Ubuntu as the base image
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 # Update the package index
 RUN apt update
